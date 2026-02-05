@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alita AI 寫真藝廊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'PingFang TC', sans-serif; }
+        .masonry-grid { display: columns; column-width: 320px; column-gap: 20px; width: 100%; }
+        .art-card { break-inside: avoid; margin-bottom: 20px; background: #161616; border: 1px solid #222; border-radius: 16px; overflow: hidden; transition: 0.3s; position: relative; }
+        .art-card:hover { transform: translateY(-5px); border-color: #f97316; box-shadow: 0 10px 30px rgba(249, 115, 22, 0.2); }
+        .prompt-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); transition: 0.4s; opacity: 0; position: absolute; inset: 0; padding: 20px; overflow-y: auto; }
+        .art-card:hover .prompt-overlay { opacity: 1; }
+        .btn-copy { background: #f97316; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .model-tag { background: #333; color: #aaa; padding: 2px 8px; border-radius: 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <nav class="flex justify-between items-center mb-12 max-w-7xl mx-auto">
+        <div>
+            <h1 class="text-3xl font-black italic tracking-tighter text-orange-500">ALITA GALLERY</h1>
+            <p class="text-xs text-gray-500">Freeman's AI Masterpieces <br><a href="index.html" style="color:#666; text-decoration:underline; font-size:10px">← 返回提示詞產生器</a></p>
+        </div>
+        <a href="upload.html" class="bg-white text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-orange-500 hover:text-white transition">上傳作品</a>
+    </nav>
+
+    <div class="masonry-grid max-w-7xl mx-auto" id="gallery-root">
+        <!-- 資料會從 JSON 動態載入 -->
+    </div>
+
+    <script>
+        const root = document.getElementById('gallery-root');
+
+        // 從 data.json 動態獲取資料
+        fetch('data.json')
+            .then(response => response.json())
+            .then(galleryData => {
+                galleryData.forEach(item => {
+                    root.innerHTML += `
+                        <div class="art-card group">
+                            <img src="${item.img}" class="w-full">
+                            <div class="p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="model-tag">${item.model}</span>
+                                    <h3 class="text-sm font-bold text-gray-300">${item.title}</h3>
+                                </div>
+                            </div>
+                            <div class="prompt-overlay flex flex-col justify-center space-y-4">
+                                <h2 class="text-lg font-bold text-orange-500">${item.title}</h2>
+                                <div>
+                                    <div class="flex justify-between text-xs text-gray-400 mb-1">繁中提示詞 <span class="btn-copy" onclick="copyText('${item.zh}')">複製</span></div>
+                                    <p class="text-xs leading-relaxed text-gray-300 bg-white/5 p-2 rounded">${item.zh}</p>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs text-gray-400 mb-1">EN PROMPT <span class="btn-copy" onclick="copyText('${item.en}')">COPY</span></div>
+                                    <p class="text-xs leading-relaxed text-gray-400 bg-white/5 p-2 rounded font-mono">${item.en}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            })
+            .catch(err => console.error('無法載入藝廊資料：', err));
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => { alert('已複製提示詞！'); });
+        }
+    </script>
+</body>
+</html>

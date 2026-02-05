@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alita Masterpiece Pro V7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #050505; color: #e2e8f0; font-family: 'PingFang TC', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; }
+        select, input { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 12px; border-radius: 10px; width: 100%; font-size: 14px; outline: none; }
+        select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        .section-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.1em; display: block; }
+        .btn-master { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-master:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5); }
+        .output-panel { background: #000; border: 1px dashed #334155; padding: 1.25rem; border-radius: 12px; font-family: 'JetBrains Mono', monospace; position: relative; }
+        .copy-btn { position: absolute; top: 0.75rem; right: 0.75rem; background: #1e293b; color: #94a3b8; padding: 4px 12px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #334155; }
+        .copy-btn:hover { background: #334155; color: #fff; }
+        .badge { background: rgba(99, 102, 241, 0.1); color: #818cf8; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-black tracking-tighter text-white mb-2">ALITA <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">MASTERPIECE</span> V7</h1>
+            <p class="text-slate-500 font-medium">大師典藏級 AI 寫真指揮中心 - 基於 Freeman 提示詞文庫</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- 模組 1: 人物特徵 -->
+            <div class="glass p-6 space-y-5">
+                <h3 class="text-indigo-400 font-bold flex items-center"><span class="mr-2">👤</span> 核心人物設定</h3>
+                <div>
+                    <span class="section-label">臉型與神情</span>
+                    <select id="char_face">
+                        <option value="sweet young woman with delicate features, obsidian straight hair, wispy bangs">甜美日系 (黑長直+空氣瀏海)</option>
+                        <option value="sophisticated woman, elegant oval face, deep mysterious gaze, coral lips">御姐氣質 (精緻鵝蛋臉+神秘眼神)</option>
+                        <option value="young woman, cute expressions, messy high ponytail, playful wink">俏皮少女 (高馬尾+眨眼)</option>
+                        <option value="elegant model, slender neck, focused and thoughtful eyes">高級感模特 (清冷氣質)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">身形比例 (S-Curve)</span>
+                    <select id="char_body">
+                        <option value="slender build, prominent full bust (沉重感), narrow waist, long legs">極限 S 曲線 (豐滿上圍+纖細腰肢)</option>
+                        <option value="graceful athletic build, smooth skin, natural curves">健康運動型 (勻稱肌肉+平滑肌膚)</option>
+                        <option value="dainty and petite, soft skin texture, elegant posture">纖細嬌小 (柔軟膚質+優雅姿態)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">膚質細節</span>
+                    <select id="char_skin">
+                        <option value="porcelain fair skin, hyper-detailed pores, realistic sweat drops, subsurface scattering">凝脂冷白 (毛孔+微汗+透光感)</option>
+                        <option value="sun-kissed radiant skin, natural glow, soft velvet texture">陽光暖色 (自然光澤+絲絨質感)</option>
+                        <option value="moist wet skin, droplets reflecting light, dewy finish">濕潤水感 (泡湯/游泳後質感)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 模組 2: 服裝與配飾 -->
+            <div class="glass p-6 space-y-5">
+                <h3 class="text-purple-400 font-bold flex items-center"><span class="mr-2">👗</span> 服裝大師</h3>
+                <div>
+                    <span class="section-label">風格服裝</span>
+                    <select id="outfit">
+                        <option value="white knit 'virgin killer' backless sweater, bold cutouts">處男殺手露背毛衣</option>
+                        <option value="exquisite embroidered silk cheongsam (Qipao), high slit">精緻絲綢旗袍 (高開衩)</option>
+                        <option value="loose oversized white men's shirt, semi-transparent">男友風白襯衫 (微透)</option>
+                        <option value="retro school uniform, pleated skirt, white ruffles">復古校園制服 (百褶裙)</option>
+                        <option value="stylish lace lingerie set, intricate textures">高級蕾絲內衣套裝</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">精選配飾</span>
+                    <select id="acc">
+                        <option value="minimalist pearl necklace, gold earrings">珍珠項鍊 + 金飾耳環</option>
+                        <option value="cute cat-ear headband, white fuzzy earmuffs">可愛貓耳 + 毛絨耳罩</option>
+                        <option value="retro black-framed glasses, intellectual vibe">復古黑框眼鏡 (知性風)</option>
+                        <option value="none">無配飾 (純淨人像)</option>
+                    </select>
+                </div>
+                <div class="pt-2">
+                    <button onclick="generate()" class="btn-master w-full py-4 rounded-xl font-black text-white tracking-widest shadow-2xl">GENERATE MASTERPIECE</button>
+                </div>
+            </div>
+
+            <!-- 模組 3: 場景與影視感 -->
+            <div class="glass p-6 space-y-5">
+                <h3 class="text-emerald-400 font-bold flex items-center"><span class="mr-2">🎬</span> 電影級環境</h3>
+                <div>
+                    <span class="section-label">場景空間</span>
+                    <select id="scene">
+                        <option value="Parisian vintage apartment, floor-to-ceiling window, rain outside">巴黎復古公寓 (落地窗+雨景)</option>
+                        <option value="Traditional Japanese tea room, tatami, zen garden background">日式禪意茶室 (榻榻米)</option>
+                        <option value="Taipei old alley, afternoon sun, utility poles, nostalgic">台北舊巷弄 (午後懷舊)</option>
+                        <option value="Luxury hotel bathroom, marble bathtub, steam haze">豪華浴室 (大理石浴缸+水氣)</option>
+                        <option value="Modern gym, industrial concrete floor, bright highlights">現代健身房 (水泥地+強光)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">攝影光學</span>
+                    <select id="lighting">
+                        <option value="God rays (Tyndall effect), soft particles in air, golden hour">耶穌光 (丁達爾效應+微塵)</option>
+                        <option value="Dramatic chiaroscuro, strong side lighting, deep shadows">強烈側光 (戲劇化明暗對比)</option>
+                        <option value="Soft Japanese airy lighting, high key, pastel tones">日系空氣感 (高調柔光)</option>
+                        <option value="Night market neon bokeh, teal and orange cinematic grade">城市霓虹 (電影級調色)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">相機規格</span>
+                    <select id="camera">
+                        <option value="Arri Alexa 65, 85mm Zeiss Master Prime, f/1.4">Arri Alexa 電影規格 (85mm)</option>
+                        <option value="Sony A7R V, 35mm f/1.8, wide angle storytelling">Sony A7R V (35mm 敘事廣角)</option>
+                        <option value="Macro lens, extreme close-up, sharp focus on eyes">微距特寫 (聚焦眼神/細節)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 輸出面板 -->
+        <div class="space-y-6 mb-12">
+            <div>
+                <p class="section-label text-indigo-400">🔥 GEMINI / GROK / FLUX (Ultra-Realistic Long Form)</p>
+                <div class="output-panel">
+                    <span class="copy-btn" onclick="copy('out-en')">COPY</span>
+                    <div id="out-en" class="text-slate-300 leading-relaxed text-sm">請配置選單並點擊「GENERATE」...</div>
+                </div>
+            </div>
+
+            <div>
+                <p class="section-label text-red-500">🚫 UNIVERSAL NEGATIVE PROMPT (最強負面指令)</p>
+                <div class="output-panel border-red-900/30">
+                    <span class="copy-btn" onclick="copy('out-neg')">COPY</span>
+                    <div id="out-neg" class="text-red-400/70 text-xs">
+                        Avoid: AI-generated look, plastic skin, low saturation, extra limbs, distorted anatomy, cartoon, 3D render, cross-eyed, blurry, messy background, watermark, text, signature, low resolution, over-sharpened.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="text-center text-slate-600 text-xs py-10 border-t border-slate-900">
+            Alita Masterpiece V7.0 • Designed for high-end AI Photography • Power by Freeman's Library
+        </footer>
+    </div>
+
+    <script>
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已複製到剪貼簿！');
+            });
+        }
+
+        function generate() {
+            const face = document.getElementById('char_face').value;
+            const body = document.getElementById('char_body').value;
+            const skin = document.getElementById('char_skin').value;
+            const outfit = document.getElementById('outfit').value;
+            const acc = document.getElementById('acc').value;
+            const scene = document.getElementById('scene').value;
+            const lighting = document.getElementById('lighting').value;
+            const camera = document.getElementById('camera').value;
+
+            const accessoryStr = acc !== 'none' ? `wearing ${acc}, ` : "";
+
+            const en = `Generate a hyper-realistic 8K cinematic masterpiece photography of a ${face}. Her physique is ${body}. Skin texture: ${skin}. She is ${accessoryStr}dressed in ${outfit}. The setting is ${scene}. Lighting: ${lighting}. Shot with ${camera}. Features: Individual hair strands, sharp focus on eyes, contact shadows, perfect anatomy, high dynamic range, raw photo style, 16:9 aspect ratio.`;
+            
+            document.getElementById('out-en').innerText = en;
+        }
+    </script>
+</body>
+</html>

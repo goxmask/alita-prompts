@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alita Masterpiece Pro V7.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #050505; color: #e2e8f0; font-family: 'PingFang TC', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; }
+        select, input { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 12px; border-radius: 10px; width: 100%; font-size: 14px; outline: none; }
+        select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        .section-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.1em; display: block; }
+        .btn-master { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-master:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5); }
+        .output-panel { background: #000; border: 1px dashed #334155; padding: 1.25rem; border-radius: 12px; font-family: 'JetBrains Mono', monospace; position: relative; min-height: 80px; }
+        .copy-btn { position: absolute; top: 0.75rem; right: 0.75rem; background: #1e293b; color: #94a3b8; padding: 4px 12px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #334155; }
+        .copy-btn:hover { background: #334155; color: #fff; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-black tracking-tighter text-white mb-2">ALITA <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">MASTERPIECE</span> V7.1</h1>
+            <p class="text-slate-500 font-medium mb-6">大師典藏級 AI 寫真指揮中心 - 中英對照版</p>
+            
+            <!-- 新增藝廊導覽按鈕 -->
+            <div class="flex justify-center space-x-4 mb-8">
+                <a href="gallery.html" class="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 px-6 py-2 rounded-full text-sm font-bold transition">
+                    <i class="fas fa-images mr-2"></i> 瀏覽作品藝廊
+                </a>
+                <a href="upload.html" class="bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 px-6 py-2 rounded-full text-sm font-bold transition">
+                    <i class="fas fa-cloud-upload-alt mr-2"></i> 投稿我的傑作
+                </a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- 模組 1: 人物特徵 -->
+            <div class="glass p-6 space-y-5">
+                <h3 class="text-indigo-400 font-bold flex items-center"><span class="mr-2">👤</span> 核心人物設定</h3>
+                <div>
+                    <span class="section-label">臉型與神情</span>
+                    <select id="char_face">
+                        <option value="sweet young woman with delicate features, obsidian straight hair, wispy bangs" data-zh="一位甜美的年輕女性，擁有精緻的五官，留著黑色長直髮與空氣瀏海">甜美日系 (黑長直+空氣瀏海)</option>
+                        <option value="sophisticated woman, elegant oval face, deep mysterious gaze, coral lips" data-zh="一位氣質成熟的女性，擁有優雅的鵝蛋臉，眼神深邃且神秘，抹著珊瑚色唇膏">御姐氣質 (精緻鵝蛋臉+神秘眼神)</option>
+                        <option value="young woman, cute expressions, messy high ponytail, playful wink" data-zh="一位可愛的年輕女生，表情俏皮，紮著隨性的高馬尾，帶著俏皮的眨眼">俏皮少女 (高馬尾+眨眼)</option>
+                        <option value="elegant model, slender neck, focused and thoughtful eyes" data-zh="一位優雅的時裝模特兒，頸部修長，眼神專注且若有所思">高級感模特 (清冷氣質)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">身形比例 (S-Curve)</span>
+                    <select id="char_body">
+                        <option value="slender build, prominent full bust (沉重感), narrow waist, long legs" data-zh="身材纖細，上圍豐滿具有份量感，腰身極細，雙腿修長">極限 S 曲線 (豐滿上圍+纖細腰肢)</option>
+                        <option value="graceful athletic build, smooth skin, natural curves" data-zh="身形健美且優雅，擁有平滑的肌膚與自然的身體曲線">健康運動型 (勻稱肌肉+平滑肌膚)</option>
+                        <option value="dainty and petite, soft skin texture, elegant posture" data-zh="身材纖細嬌小，擁有柔軟的膚質與優雅的儀態">纖細嬌小 (柔軟膚質+優雅姿態)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">膚質細節</span>
+                    <select id="char_skin">
+                        <option value="porcelain fair skin, hyper-detailed pores, realistic sweat drops, subsurface scattering" data-zh="白皙如瓷的膚色，可見精細的毛孔與真實的汗珠，具有皮膚透光感">凝脂冷白 (毛孔+微汗+透光感)</option>
+                        <option value="sun-kissed radiant skin, natural glow, soft velvet texture" data-zh="陽光映照出的亮麗膚色，帶有自然光澤與絲絨般質地">陽光暖色 (自然光澤+絲絨質感)</option>
+                        <option value="moist wet skin, droplets reflecting light, dewy finish" data-zh="濕潤且充滿水感的肌膚，水滴反射著光芒，呈現水靈質感">濕潤水感 (泡湯/游泳後質感)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 模組 2: 服裝與配飾 -->
+            <div class="glass p-6 space-y-5">
+                <h3 class="text-purple-400 font-bold flex items-center"><span class="mr-2">👗</span> 服裝大師</h3>
+                <div>
+                    <span class="section-label">風格服裝</span>
+                    <select id="outfit">
+                        <option value="white knit 'virgin killer' backless sweater, bold cutouts" data-zh="一件白色針織露背毛衣，剪裁大膽且展現身體曲線">處男殺手露背毛衣</option>
+                        <option value="exquisite embroidered silk cheongsam (Qipao), high slit" data-zh="一件精緻的刺繡絲綢旗袍，設計有高開衩展現腿部線條">精緻絲綢旗袍 (高開衩)</option>
+                        <option value="loose oversized white men's shirt, semi-transparent" data-zh="一件寬鬆超大號的白色男士襯衫，呈現微透視質感">男友風白襯衫 (微透)</option>
+                        <option value="retro school uniform, pleated skirt, white ruffles" data-zh="一套復古校園制服，搭配百褶裙與白色荷葉邊細節">復古校園制服 (百褶裙)</option>
+                        <option value="stylish lace lingerie set, intricate textures" data-zh="一套時尚的蕾絲內衣套裝，擁有精細的織紋細節">高級蕾絲內衣套裝</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">精選配飾</span>
+                    <select id="acc">
+                        <option value="minimalist pearl necklace, gold earrings" data-zh="佩戴著極簡的珍珠項鍊與金色耳環">珍珠項鍊 + 金飾耳環</option>
+                        <option value="cute cat-ear headband, white fuzzy earmuffs" data-zh="頭戴可愛的貓耳髮箍與白色毛絨耳罩">可愛貓耳 + 毛絨耳罩</option>
+                        <option value="retro black-framed glasses, intellectual vibe" data-zh="戴著復古黑框眼鏡，散發知性魅力">復古黑框眼鏡 (知性風)</option>
+                        <option value="none" data-zh="">無配飾 (純淨人像)</option>
+                    </select>
+                </div>
+                <div class="pt-2">
+                    <button onclick="generate()" class="btn-master w-full py-4 rounded-xl font-black text-white tracking-widest shadow-2xl">GENERATE PROMPT</button>
+                </div>
+            </div>
+
+            <!-- 模組 3: 場景與影視感 -->
+            <div class="glass p-6 space-y-5">
+                <h3 class="text-emerald-400 font-bold flex items-center"><span class="mr-2">🎬</span> 電影級環境</h3>
+                <div>
+                    <span class="section-label">場景空間</span>
+                    <select id="scene">
+                        <option value="Parisian vintage apartment, floor-to-ceiling window, rain outside" data-zh="在巴黎復古公寓的落地窗邊，窗外正下著雨">巴黎復古公寓 (落地窗+雨景)</option>
+                        <option value="Traditional Japanese tea room, tatami, zen garden background" data-zh="在傳統日式茶室中，坐在榻榻米上，背景是禪意花園">日式禪意茶室 (榻榻米)</option>
+                        <option value="Taipei old alley, afternoon sun, utility poles, nostalgic" data-zh="在台北的舊巷弄中，午後陽光穿過電線桿，充滿懷舊氛圍">台北舊巷弄 (午後懷舊)</option>
+                        <option value="Luxury hotel bathroom, marble bathtub, steam haze" data-zh="在高級飯店的浴室裡，坐在大理石浴缸邊，充滿水汽與薄霧感">豪華浴室 (大理石浴缸+水氣)</option>
+                        <option value="Modern gym, industrial concrete floor, bright highlights" data-zh="在現代健身房，水泥地上的強光勾勒出人物輪廓">現代健身房 (水泥地+強光)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">攝影光學</span>
+                    <select id="lighting">
+                        <option value="God rays (Tyndall effect), soft particles in air, golden hour" data-zh="一道道耶穌光(丁達爾效應)，空氣中有微塵飄浮，正是金黃時段">耶穌光 (丁達爾效應+微塵)</option>
+                        <option value="Dramatic chiaroscuro, strong side lighting, deep shadows" data-zh="戲劇性的強烈側光，形成深邃的陰影與強烈對比">強烈側光 (戲劇化明暗對比)</option>
+                        <option value="Soft Japanese airy lighting, high key, pastel tones" data-zh="柔和的日系空氣感採光，高飽和且色調柔和">日系空氣感 (高調柔光)</option>
+                        <option value="Night market neon bokeh, teal and orange cinematic grade" data-zh="夜市的霓虹背景散景，採用青橙色的電影級調色">城市霓虹 (電影級調色)</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="section-label">相機規格</span>
+                    <select id="camera">
+                        <option value="Arri Alexa 65, 85mm Zeiss Master Prime, f/1.4" data-zh="採用 Arri Alexa 電影規格攝影機，搭配 85mm 蔡司大師定焦鏡拍攝">Arri Alexa 電影規格 (85mm)</option>
+                        <option value="Sony A7R V, 35mm f/1.8, wide angle storytelling" data-zh="使用 Sony A7R V，搭配 35mm 敘事廣角鏡頭拍攝">Sony A7R V (35mm 敘事廣角)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 輸出面板 -->
+        <div class="space-y-8 mb-12">
+            <div>
+                <p class="section-label text-indigo-400">🔥 EN PROMPT (GEMINI / GROK / FLUX)</p>
+                <div class="output-panel">
+                    <span class="copy-btn" onclick="copy('out-en')">COPY EN</span>
+                    <div id="out-en" class="text-slate-300 leading-relaxed text-sm">請配置選單並點擊「GENERATE」...</div>
+                </div>
+            </div>
+
+            <div>
+                <p class="section-label text-emerald-400">🇹🇼 繁體中文描述 (可手動微調參考)</p>
+                <div class="output-panel border-emerald-900/30">
+                    <span class="copy-btn" onclick="copy('out-zh')">COPY ZH</span>
+                    <div id="out-zh" class="text-emerald-300/80 leading-relaxed text-sm">請配置選單並點擊「GENERATE」...</div>
+                </div>
+            </div>
+
+            <div>
+                <p class="section-label text-red-500">🚫 UNIVERSAL NEGATIVE PROMPT (最強負面指令)</p>
+                <div class="output-panel border-red-900/30">
+                    <span class="copy-btn" onclick="copy('out-neg')">COPY NEG</span>
+                    <div id="out-neg" class="text-red-400/70 text-xs">
+                        Avoid: AI-generated look, plastic skin, low saturation, extra limbs, distorted anatomy, cartoon, 3D render, cross-eyed, blurry, messy background, watermark, text, signature, low resolution, over-sharpened.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="text-center text-slate-600 text-xs py-10 border-t border-slate-900">
+            Alita Masterpiece V7.1 • Dual-Language Edition • Power by Freeman's Library
+        </footer>
+    </div>
+
+    <script>
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已複製到剪貼簿！');
+            });
+        }
+
+        function generate() {
+            const face = document.getElementById('char_face');
+            const body = document.getElementById('char_body');
+            const skin = document.getElementById('char_skin');
+            const outfit = document.getElementById('outfit');
+            const acc = document.getElementById('acc');
+            const scene = document.getElementById('scene');
+            const lighting = document.getElementById('lighting');
+            const camera = document.getElementById('camera');
+
+            const accessoryStr = acc.value !== 'none' ? `wearing ${acc.value}, ` : "";
+            const accessoryZh = acc.value !== 'none' ? `${acc.selectedOptions[0].getAttribute('data-zh')}，` : "";
+
+            // 生成英文 Prompt
+            const en = `Generate a hyper-realistic 8K cinematic masterpiece photography of a ${face.value}. Her physique is ${body.value}. Skin texture: ${skin.value}. She is ${accessoryStr}dressed in ${outfit.value}. The setting is ${scene.value}. Lighting: ${lighting.value}. Shot with ${camera.value}. Features: Individual hair strands, sharp focus on eyes, contact shadows, perfect anatomy, high dynamic range, raw photo style.`;
+            
+            // 生成中文 Prompt
+            const zh = `【超寫實攝影傑作】描繪${face.selectedOptions[0].getAttribute('data-zh')}。身形呈現${body.selectedOptions[0].getAttribute('data-zh')}。皮膚細節：${skin.selectedOptions[0].getAttribute('data-zh')}。她${accessoryZh}穿著${outfit.selectedOptions[0].getAttribute('data-zh')}。場景設定在${scene.selectedOptions[0].getAttribute('data-zh')}。光影效果：${lighting.selectedOptions[0].getAttribute('data-zh')}。拍攝規格：${camera.selectedOptions[0].getAttribute('data-zh')}。畫面特點：細膩髮絲、眼神對焦銳利、真實陰影與高動態範圍。`;
+
+            document.getElementById('out-en').innerText = en;
+            document.getElementById('out-zh').innerText = zh;
+        }
+    </script>
+</body>
+</html>

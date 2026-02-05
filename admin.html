@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理後台 | Alita AI 寫真館</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'PingFang TC', sans-serif; }
+        .admin-card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .login-overlay { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; items-center; justify-content: center; flex-direction: column; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <!-- 簡單的登入檢查 -->
+    <div id="login-box" class="login-overlay">
+        <h1 class="text-2xl font-bold mb-6 text-orange-500 italic">ALITA ADMIN LOGIN</h1>
+        <input type="password" id="pw" placeholder="輸入管理密碼..." class="bg-gray-900 border border-gray-700 p-3 rounded-lg w-64 text-center mb-4">
+        <button onclick="checkLogin()" class="bg-orange-500 px-10 py-3 rounded-lg font-bold">進入後台</button>
+    </div>
+
+    <div id="admin-content" class="hidden max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-black text-white">藝廊管理控制台</h1>
+            <button onclick="location.reload()" class="text-xs text-gray-500 underline">登出</button>
+        </header>
+
+        <div id="item-list" class="space-y-4">
+            <!-- 由 JS 動態加載作品 -->
+        </div>
+    </div>
+
+    <script>
+        function checkLogin() {
+            const pw = document.getElementById('pw').value;
+            if (pw === 'orange2026') {
+                document.getElementById('login-box').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+                loadItems();
+            } else {
+                alert('密碼錯誤！');
+            }
+        }
+
+        function loadItems() {
+            fetch('data.json')
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('item-list');
+                    list.innerHTML = '';
+                    data.forEach(item => {
+                        list.innerHTML += `
+                            <div class="admin-card">
+                                <div class="flex items-center space-x-4">
+                                    <img src="${item.img}" class="w-16 h-16 object-cover rounded-lg border border-gray-800">
+                                    <div>
+                                        <h3 class="font-bold text-gray-200">${item.title}</h3>
+                                        <p class="text-xs text-gray-500">ID: ${item.id}</p>
+                                    </div>
+                                </div>
+                                <button onclick="generateDeleteCmd('${item.id}', '${item.title}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition">刪除作品</button>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        function generateDeleteCmd(id, title) {
+            const cmd = `刪除藝廊作品｜ID：${id}｜標題：${title}`;
+            prompt('請複製下方指令並傳送給 Alita (Telegram) 以完成刪除作業：', cmd);
+        }
+    </script>
+</body>
+</html>

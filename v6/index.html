@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alita Prompt Ultimate V6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: 'PingFang TC', sans-serif; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        select, input[type="text"] { background: #0f172a; border: 1px solid #475569; color: #e2e8f0; padding: 10px; border-radius: 8px; width: 100%; font-size: 14px; }
+        .section-title { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+        .btn-gen { background: linear-gradient(to right, #3b82f6, #8b5cf6); transition: all 0.3s; }
+        .btn-gen:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .output-box { background: #0f172a; border: 1px solid #334155; padding: 1rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; position: relative; min-height: 80px; }
+        .copy-tag { position: absolute; top: 0.5rem; right: 0.5rem; background: #334155; color: #cbd5e1; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2 italic">ALITA ULTIMATE V6</h1>
+            <p class="text-slate-500">旗艦級 AI 攝影指揮中心 - 修正版</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
+            <!-- 左側：人物設定 -->
+            <div class="card p-5 space-y-4">
+                <h2 class="text-blue-400 font-bold border-b border-slate-700 pb-2 mb-4">👤 人物面部</h2>
+                <div>
+                    <p class="section-title">髮型</p>
+                    <select id="hair">
+                        <option value="long straight obsidian hair, wispy bangs">長直黑髮 + 空氣瀏海</option>
+                        <option value="voluminous wavy hair, honey brown">大波浪 + 蜂蜜棕色</option>
+                        <option value="sleek bob cut, dark charcoal">俐落鮑伯頭</option>
+                        <option value="messy high ponytail, realistic strands">隨性高馬尾</option>
+                    </select>
+                </div>
+                <div>
+                    <p class="section-title">表情</p>
+                    <select id="expression">
+                        <option value="soft gentle smile, looking at camera">柔和微笑 (直視)</option>
+                        <option value="candid expression, looking away">隨性神情 (側臉)</option>
+                        <option value="confident fierce gaze">自信犀利眼神</option>
+                    </select>
+                </div>
+                <div>
+                    <p class="section-title">配飾細節</p>
+                    <select id="acc">
+                        <option value="none">無配飾</option>
+                        <option value="minimalist gold jewelry, elegant earrings">極簡金飾耳環</option>
+                        <option value="sophisticated pearl necklace">珍珠項鍊</option>
+                        <option value="stylish transparent glasses">透明復古眼鏡</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 中間：環境與服裝 -->
+            <div class="card p-5 space-y-4 lg:col-span-2">
+                <h2 class="text-purple-400 font-bold border-b border-slate-700 pb-2 mb-4">🏙️ 場景、服裝與光影</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="section-title">場景環境</p>
+                        <select id="scene">
+                            <option value="Taipei night market, neon bokeh">台北夜市</option>
+                            <option value="mountain forest, misty morning, Tyndall effect">森林晨霧 (耶穌光)</option>
+                            <option value="luxurious classic mansion, velvet curtains">古典大宅</option>
+                            <option value="abandoned church, god rays">廢棄教堂 (神聖光)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="section-title">服裝材質</p>
+                        <select id="outfit">
+                            <option value="silk cheongsam (Qipao), intricate embroidery">精緻旗袍</option>
+                            <option value="oversized knit sweater, soft texture">寬鬆針織衫</option>
+                            <option value="vintage school uniform, blazer">學院風西裝</option>
+                            <option value="sleek leather jacket">酷帥皮衣</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <p class="section-title">燈光與氛圍</p>
+                    <select id="lighting">
+                        <option value="golden hour backlight, sun flare">日落逆光</option>
+                        <option value="cinematic low key, deep shadows">電影暗調</option>
+                        <option value="natural soft window light">窗邊柔光</option>
+                        <option value="vibrant neon city lights">都市霓虹</option>
+                    </select>
+                </div>
+                <button onclick="generate()" class="btn-gen w-full py-4 rounded-xl font-black text-lg tracking-widest mt-4">GENERATE PROMPT</button>
+            </div>
+
+            <!-- 右側：攝影規格 -->
+            <div class="card p-5 space-y-4">
+                <h2 class="text-emerald-400 font-bold border-b border-slate-700 pb-2 mb-4">📷 攝影與質感</h2>
+                <div>
+                    <p class="section-title">相機與鏡頭</p>
+                    <select id="camera">
+                        <option value="Sony A1, 85mm f/1.2 GM">Sony A1 (85mm)</option>
+                        <option value="Leica M11, 35mm Summilux">Leica M11 (35mm)</option>
+                    </select>
+                </div>
+                <div>
+                    <p class="section-title">視覺效果</p>
+                    <select id="vfx">
+                        <option value="8k raw photo, ray tracing">8K RAW 寫實</option>
+                        <option value="35mm film stock, Kodak Portra 400">柯達膠卷質感</option>
+                    </select>
+                </div>
+                <div class="pt-4">
+                    <input type="checkbox" id="micro" checked>
+                    <label class="text-xs text-slate-400">啟用「微細節」強化</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 輸出面板 -->
+        <div class="space-y-4">
+            <div>
+                <p class="section-title text-blue-400">EN: GEMINI / GROK / FLUX</p>
+                <div class="output-box">
+                    <span class="copy-tag" onclick="copy('out-en')">COPY</span>
+                    <div id="out-en">點擊上方按鈕生成...</div>
+                </div>
+            </div>
+            <div>
+                <p class="section-title text-emerald-400">TAGS: Z-IMAGE / SD</p>
+                <div class="output-box">
+                    <span class="copy-tag" onclick="copy('out-tags')">COPY</span>
+                    <div id="out-tags">點擊上方按鈕生成...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已複製到剪貼簿！');
+            });
+        }
+
+        function generate() {
+            try {
+                const hair = document.getElementById('hair').value;
+                const exp = document.getElementById('expression').value;
+                const acc = document.getElementById('acc').value;
+                const scene = document.getElementById('scene').value;
+                const outfit = document.getElementById('outfit').value;
+                const lighting = document.getElementById('lighting').value;
+                const camera = document.getElementById('camera').value;
+                const vfx = document.getElementById('vfx').value;
+                const useMicro = document.getElementById('micro').checked;
+
+                const microDetails = useMicro ? "hyper-detailed skin pores, subsurface scattering, contact shadows, " : "";
+                const accessory = acc !== 'none' ? `wearing ${acc}, ` : "";
+
+                const en = `A masterpiece ultra-realistic photography of a beautiful woman with ${hair}, ${exp}. ${accessory}She is in a ${scene}, wearing ${outfit}. ${lighting}. ${microDetails}Shot on ${camera}, ${vfx}. Cinematic color grading, 8k.`;
+                const tags = `1girl, solo, asian, ${hair.split(',')[0]}, ${acc !== 'none' ? acc.split(',')[0] : ''}, ${scene.split(',')[0]}, ${outfit.split(',')[0]}, realistic, masterpiece, 8k.`;
+
+                document.getElementById('out-en').innerText = en;
+                document.getElementById('out-tags').innerText = tags;
+            } catch (err) {
+                console.error(err);
+                alert('生成出錯：' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
