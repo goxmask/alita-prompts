@@ -1,5 +1,13 @@
 [
   {
+    "id": "1770496089338",
+    "title": "Alita 系統自動恢復測試",
+    "img": "README-header.png",
+    "zh": "這是一張繞過 API 後台，直接由 Alita 手動 Push 的測試圖。",
+    "en": "System recovery test bypassing the API.",
+    "model": "Alita-Manual"
+  },
+  {
     "id": "1770377365333",
     "title": "台北舊巷弄旗袍美女",
     "img": "images/art_1770377365333.jpg",
