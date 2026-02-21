@@ -7,220 +7,412 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #050505; color: #e2e8f0; font-family: 'PingFang TC', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; }
-        select, input { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 12px; border-radius: 10px; width: 100%; font-size: 14px; outline: none; transition: 0.3s; }
-        select:focus { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
-        .section-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.1em; display: block; }
-        .btn-master { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .btn-master:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.5); }
-        .output-panel { background: #000; border: 1px dashed #334155; padding: 1.25rem; border-radius: 12px; font-family: 'JetBrains Mono', monospace; position: relative; min-height: 80px; }
-        .copy-btn { position: absolute; top: 0.75rem; right: 0.75rem; background: #1e293b; color: #94a3b8; padding: 4px 12px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; border: 1px solid #334155; }
-        .copy-btn:hover { background: #334155; color: #fff; }
+        body { 
+            background: #050505; 
+            color: #e2e8f0; 
+            font-family: 'PingFang TC', -apple-system, sans-serif; 
+            position: relative;
+        }
+        
+        /* Ambient Glow & Depth */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .glow-orb-1 {
+            position: absolute;
+            top: -15%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 20s ease-in-out infinite alternate;
+        }
+        .glow-orb-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(5, 5, 5, 0) 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: float 25s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.1); }
+        }
+
+        /* Glassmorphism & Micro-interactions */
+        .glass { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 20px; 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass:hover {
+            transform: translateY(-4px);
+            border-color: rgba(249, 115, 22, 0.3);
+            box-shadow: 0 12px 40px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Form Elements */
+        select { 
+            background: rgba(15, 23, 42, 0.8); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #f8fafc; 
+            padding: 14px 16px; 
+            border-radius: 12px; 
+            width: 100%; 
+            font-size: 14px; 
+            outline: none; 
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+        select:hover {
+            border-color: rgba(249, 115, 22, 0.3);
+            background-color: rgba(30, 41, 59, 0.8);
+        }
+        select:focus { 
+            border-color: #f97316; 
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15); 
+        }
+        select option {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Typography */
+        .text-glow {
+            text-shadow: 0 0 30px rgba(249, 115, 22, 0.6);
+            letter-spacing: -0.02em;
+        }
+        .subtitle-spaced {
+            letter-spacing: 0.15em;
+        }
+        .section-label { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: #64748b; 
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+            letter-spacing: 0.15em; 
+            display: block; 
+        }
+        .category-title {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn-master { 
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-master:hover { 
+            transform: translateY(-2px) scale(1.01); 
+            box-shadow: 0 15px 30px -5px rgba(249, 115, 22, 0.4); 
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Output Area */
+        .output-panel { 
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            padding: 1.5rem; 
+            border-radius: 16px; 
+            font-family: 'JetBrains Mono', 'Courier New', monospace; 
+            position: relative; 
+            min-height: 100px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .copy-btn { 
+            position: absolute; 
+            top: 1rem; 
+            right: 1rem; 
+            background: rgba(30, 41, 59, 0.8); 
+            color: #94a3b8; 
+            padding: 6px 14px; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .copy-btn:hover { 
+            background: #f97316; 
+            color: #fff;
+            border-color: #f97316;
+            transform: translateY(-1px);
+        }
+        
+        /* Layout adjust for categories */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
     </style>
 </head>
-<body class="p-4 md:p-10">
-    <div class="max-w-7xl mx-auto">
-        <header class="text-center mb-12">
-            <h1 class="text-5xl font-black tracking-tighter text-white mb-2 italic">ALITA <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">MASTERPIECE</span> V7.5</h1>
-            <p class="text-slate-500 font-medium mb-6">終極大百科版 - 全品項20+專業選單</p>
+<body class="p-4 md:p-8 lg:p-12">
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="glow-orb-1"></div>
+        <div class="glow-orb-2"></div>
+    </div>
+
+    <div class="max-w-[1400px] mx-auto relative z-10">
+        <header class="text-center mb-16 pt-8">
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-white mb-4 italic text-glow">ALITA <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">MASTERPIECE</span></h1>
+            <p class="text-slate-400 font-bold mb-8 subtitle-spaced text-sm md:text-base">V7.5 終極大百科版 / 全品項20+專業選單</p>
             
-            <div class="flex justify-center space-x-4 mb-8">
-                <a href="gallery.html" target="_blank" class="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 px-6 py-2 rounded-full text-sm font-bold transition">
+            <div class="flex justify-center space-x-4">
+                <a href="gallery.html" target="_blank" class="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 px-6 py-2.5 rounded-full text-sm font-bold transition duration-300 shadow-lg shadow-indigo-500/5">
                     <i class="fas fa-images mr-2"></i> 瀏覽作品藝廊
                 </a>
-                <a href="upload.html" target="_blank" class="bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 px-6 py-2 rounded-full text-sm font-bold transition">
+                <a href="upload.html" target="_blank" class="bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 text-orange-300 px-6 py-2.5 rounded-full text-sm font-bold transition duration-300 shadow-lg shadow-orange-500/5">
                     <i class="fas fa-cloud-upload-alt mr-2"></i> 投稿我的傑作
                 </a>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <!-- 1. 人物容貌 -->
-            <div class="glass p-5 space-y-4">
-                <h3 class="text-orange-400 font-bold flex items-center"><span class="mr-2">👤</span> 容貌風格</h3>
-                <select id="char_face">
-                    <option value="sweet young woman with delicate features, obsidian hair, wispy bangs" data-zh="甜美日系女孩，精緻五官，黑長直髮配空氣瀏海">甜美日系 (鄰家)</option>
-                    <option value="sophisticated woman, elegant oval face, deep mysterious gaze" data-zh="高冷御姐氣質，優雅鵝蛋臉，深邃神秘眼神">高冷御姐 (氣質)</option>
-                    <option value="pure-lust style young woman, dewy finish skin, flushed cheeks" data-zh="純慾風少女，肌膚帶有水亮感，羞紅臉頰，眼神無辜">純慾風 (水靈)</option>
-                    <option value="elegant fashion model, sharp bone structure, icy professional gaze" data-zh="時尚超模感，臉骨線條銳利，冰冷且專業的眼神">時尚超模 (專業)</option>
-                    <option value="doll-like young woman, large round eyes, porcelain skin, small lips" data-zh="洋娃娃般精緻，大而圓的眼睛，白瓷肌，櫻桃小嘴">精緻蘿莉 (瓷肌)</option>
-                    <option value="gothic style woman, dark makeup, mysterious and melancholic" data-zh="暗黑哥德風格，濃郁妝容，神秘且帶著憂鬱感">暗黑哥德 (神秘)</option>
-                    <option value="sun-kissed girl, radiant tanned skin, bright smile, energetic" data-zh="陽光運動女孩，健康的小麥色肌膚，燦爛笑容">陽光女孩 (活力)</option>
-                    <option value="intellectual woman with glasses, refined features, calm atmosphere" data-zh="知性書卷氣質，戴著眼鏡，精緻五官，冷靜氛圍">知性美感 (眼鏡)</option>
-                    <option value="cyberpunk girl, neon hair highlights, futuristic makeup" data-zh="賽博龐克風格，霓虹挑染髮色，未來感妝容">賽博龐克 (前衛)</option>
-                    <option value="ethereal elf-like woman, flowing hair, silver eyes, translucent skin" data-zh="空靈精靈系，飄逸長髮，銀色瞳孔，半透明感肌膚">空靈仙氣 (精靈)</option>
-                    <option value="mixed-race beauty, exotic features, honey-colored eyes" data-zh="混血美感，異國風情五官，蜂蜜色雙眼">異國混血 (深邃)</option>
-                    <option value="traditional classic beauty, graceful bun, gentle and modest" data-zh="古典婉約美，優雅盤髮，溫柔謙遜的氣息">傳統古典 (優雅)</option>
-                    <option value="rebellious girl, short dyed hair, piercing gaze, nose ring" data-zh="叛逆個性風，短染髮，銳利眼神，帶著鼻環">叛逆個性 (酷颯)</option>
-                    <option value="mature elegant woman, wealthy vibe, sophisticated style" data-zh="成熟高貴女性，名媛氣息，精緻且貴氣的風格">成熟名媛 (奢華)</option>
-                    <option value="melancholic artistic girl, dreamy expression, soft features" data-zh="憂鬱文藝風，夢幻神情，柔和的臉部線條">憂鬱文藝 (夢幻)</option>
-                    <option value="vibrant idol girl, energetic eyes, colorful accessories" data-zh="活力偶像風，充滿元氣的眼神，色彩繽紛的配飾">元氣偶像 (甜美)</option>
-                    <option value="minimalist natural look, no-makeup aesthetic, clean skin" data-zh="極簡素顏感，自然美學，乾淨無瑕的肌膚">極簡素顏 (純淨)</option>
-                    <option value="fierce warrior woman, battle scars, determined look" data-zh="堅毅戰士風格，細微傷痕，充滿決心的眼神">堅毅女將 (硬派)</option>
-                    <option value="shy innocent girl, blushing, looking down modestly" data-zh="害羞純真少女，雙頰緋紅，羞澀地垂下眼簾">害羞純真 (無辜)</option>
-                    <option value="tapered jawline, fox eyes, seductive smile" data-zh="尖細下顎線，狐狸眼，帶著誘惑的微笑">嫵媚狐系 (勾魂)</option>
-                </select>
-                <span class="section-label">身形比例</span>
-                <select id="char_body">
-                    <option value="slender build, prominent full bust (heavy), narrow waist" data-zh="極限 S 曲線，豐滿上圍(具重力感)，細腰比例">極限 S 曲線 (1.5倍)</option>
-                    <option value="tall athletic build, long slender legs, toned physique" data-zh="高挑運動型，擁有一雙修長且均勻的美腿，肌肉緊實">健康長腿型</option>
-                    <option value="petite and dainty, soft natural curves, realistic skin texture" data-zh="嬌小玲瓏，自然柔軟曲線，皮膚質感真實">嬌小柔美型</option>
-                    <option value="curvy hourglass figure, wide hips, soft skin folds" data-zh="豐滿沙漏型，寬闊臀部，自然的皮膚摺痕">豐滿沙漏型</option>
-                    <option value="lean model build, graceful posture, slender arms" data-zh="修長模特身形，優雅儀態，纖細的手臂">專業模特身形</option>
-                    <option value="skinny yet toned, individual muscle definitions" data-zh="纖瘦但有線條，清晰的肌肉輪廓">纖瘦健美型</option>
-                </select>
+        <div class="controls-grid">
+            <!-- 模組 1：主體刻畫 -->
+            <div class="glass p-6 md:p-8 space-y-6">
+                <h2 class="category-title text-white"><span class="text-orange-400 mr-3">🧬</span> THE SUBJECT</h2>
+                
+                <div>
+                    <span class="section-label">容貌風格</span>
+                    <select id="char_face">
+                        <option value="sweet young woman with delicate features, obsidian hair, wispy bangs" data-zh="甜美日系女孩，精緻五官，黑長直髮配空氣瀏海">甜美日系 (鄰家)</option>
+                        <option value="sophisticated woman, elegant oval face, deep mysterious gaze" data-zh="高冷御姐氣質，優雅鵝蛋臉，深邃神秘眼神">高冷御姐 (氣質)</option>
+                        <option value="pure-lust style young woman, dewy finish skin, flushed cheeks" data-zh="純慾風少女，肌膚帶有水亮感，羞紅臉頰，眼神無辜">純慾風 (水靈)</option>
+                        <option value="elegant fashion model, sharp bone structure, icy professional gaze" data-zh="時尚超模感，臉骨線條銳利，冰冷且專業的眼神">時尚超模 (專業)</option>
+                        <option value="doll-like young woman, large round eyes, porcelain skin, small lips" data-zh="洋娃娃般精緻，大而圓的眼睛，白瓷肌，櫻桃小嘴">精緻蘿莉 (瓷肌)</option>
+                        <option value="gothic style woman, dark makeup, mysterious and melancholic" data-zh="暗黑哥德風格，濃郁妝容，神秘且帶著憂鬱感">暗黑哥德 (神秘)</option>
+                        <option value="sun-kissed girl, radiant tanned skin, bright smile, energetic" data-zh="陽光運動女孩，健康的小麥色肌膚，燦爛笑容">陽光女孩 (活力)</option>
+                        <option value="intellectual woman with glasses, refined features, calm atmosphere" data-zh="知性書卷氣質，戴著眼鏡，精緻五官，冷靜氛圍">知性美感 (眼鏡)</option>
+                        <option value="cyberpunk girl, neon hair highlights, futuristic makeup" data-zh="賽博龐克風格，霓虹挑染髮色，未來感妝容">賽博龐克 (前衛)</option>
+                        <option value="ethereal elf-like woman, flowing hair, silver eyes, translucent skin" data-zh="空靈精靈系，飄逸長髮，銀色瞳孔，半透明感肌膚">空靈仙氣 (精靈)</option>
+                        <option value="mixed-race beauty, exotic features, honey-colored eyes" data-zh="混血美感，異國風情五官，蜂蜜色雙眼">異國混血 (深邃)</option>
+                        <option value="traditional classic beauty, graceful bun, gentle and modest" data-zh="古典婉約美，優雅盤髮，溫柔謙遜的氣息">傳統古典 (優雅)</option>
+                        <option value="rebellious girl, short dyed hair, piercing gaze, nose ring" data-zh="叛逆個性風，短染髮，銳利眼神，帶著鼻環">叛逆個性 (酷颯)</option>
+                        <option value="mature elegant woman, wealthy vibe, sophisticated style" data-zh="成熟高貴女性，名媛氣息，精緻且貴氣的風格">成熟名媛 (奢華)</option>
+                        <option value="melancholic artistic girl, dreamy expression, soft features" data-zh="憂鬱文藝風，夢幻神情，柔和的臉部線條">憂鬱文藝 (夢幻)</option>
+                        <option value="vibrant idol girl, energetic eyes, colorful accessories" data-zh="活力偶像風，充滿元氣的眼神，色彩繽紛的配飾">元氣偶像 (甜美)</option>
+                        <option value="minimalist natural look, no-makeup aesthetic, clean skin" data-zh="極簡素顏感，自然美學，乾淨無瑕的肌膚">極簡素顏 (純淨)</option>
+                        <option value="fierce warrior woman, battle scars, determined look" data-zh="堅毅戰士風格，細微傷痕，充滿決心的眼神">堅毅女將 (硬派)</option>
+                        <option value="shy innocent girl, blushing, looking down modestly" data-zh="害羞純真少女，雙頰緋紅，羞澀地垂下眼簾">害羞純真 (無辜)</option>
+                        <option value="tapered jawline, fox eyes, seductive smile" data-zh="尖細下顎線，狐狸眼，帶著誘惑的微笑">嫵媚狐系 (勾魂)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <span class="section-label">身形比例</span>
+                    <select id="char_body">
+                        <option value="slender build, prominent full bust (heavy), narrow waist" data-zh="極限 S 曲線，豐滿上圍(具重力感)，細腰比例">極限 S 曲線 (1.5倍)</option>
+                        <option value="tall athletic build, long slender legs, toned physique" data-zh="高挑運動型，擁有一雙修長且均勻的美腿，肌肉緊實">健康長腿型</option>
+                        <option value="petite and dainty, soft natural curves, realistic skin texture" data-zh="嬌小玲瓏，自然柔軟曲線，皮膚質感真實">嬌小柔美型</option>
+                        <option value="curvy hourglass figure, wide hips, soft skin folds" data-zh="豐滿沙漏型，寬闊臀部，自然的皮膚摺痕">豐滿沙漏型</option>
+                        <option value="lean model build, graceful posture, slender arms" data-zh="修長模特身形，優雅儀態，纖細的手臂">專業模特身形</option>
+                        <option value="skinny yet toned, individual muscle definitions" data-zh="纖瘦但有線條，清晰的肌肉輪廓">纖瘦健美型</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <span class="section-label">表情細節</span>
+                    <select id="expression">
+                        <option value="gentle smile, soft eye contact" data-zh="柔和微笑，溫柔對視鏡頭">柔和微笑</option>
+                        <option value="looking away thoughtfully, mysterious gaze" data-zh="若有所思地望向遠方，神秘感">憂鬱遠眺</option>
+                        <option value="playful wink, mischievous smile" data-zh="俏皮眨眼，帶著壞壞的笑容">俏皮眨眼</option>
+                        <option value="head tilted back, eyes half closed, soft breath" data-zh="頭微後仰，雙眼微閉，輕聲呼吸">慵懶放鬆</option>
+                        <option value="serious cold gaze, intimidating beauty" data-zh="嚴肅且冰冷的眼神，充滿侵略性">高冷驚艷</option>
+                        <option value="laughing out loud, eyes crinkling, natural joy" data-zh="放聲大笑，眼睛微瞇，自然的喜悅">開懷大笑</option>
+                        <option value="pouting slightly, cute and angry look" data-zh="微微嘟嘴，帶著可愛的生氣感">可愛嘟嘴</option>
+                        <option value="surprised expression, wide eyes, parted lips" data-zh="驚訝表情，睜大雙眼，紅唇微張">驚訝瞬間</option>
+                        <option value="seductive bedroom eyes, inviting look" data-zh="勾魂的眼神，充滿誘惑的氣息">嫵媚誘惑</option>
+                        <option value="cold and distant, indifferent expression" data-zh="冷淡且疏離，一種漠不關心的神情">漠然疏離</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- 2. 動作姿態 -->
-            <div class="glass p-5 space-y-4">
-                <h3 class="text-blue-400 font-bold flex items-center"><span class="mr-2">💃</span> 動作姿態</h3>
-                <select id="pose">
-                    <option value="sitting on a chair, legs elegantly crossed" data-zh="優雅地坐在椅子上，雙腿交叉">優雅坐姿 (翹腳)</option>
-                    <option value="kneeling on the ground, torso leaning forward" data-zh="嫵媚地跪在地上，上半身微前傾">嫵媚跪姿 (前傾)</option>
-                    <option value="leaning against a wall, looking back over shoulder" data-zh="背靠牆壁，微微回眸，眼神慵懶">牆邊回眸 (側身)</option>
-                    <option value="stretching arms upward, revealing waistline" data-zh="雙手向上伸展，展現纖細腰部">伸懶腰 (展腰線)</option>
-                    <option value="walking towards camera, motion blur, hair flowing" data-zh="迎面走向鏡頭，帶點動態模糊感">自信走動 (動態)</option>
-                    <option value="squatting on heels, casual street style" data-zh="帥氣地蹲著，展現隨性街頭張力">街頭帥氣蹲姿</option>
-                    <option value="lying on back, hair spreading out like a fan" data-zh="平躺姿態，髮絲如扇子般散開">床上平躺 (散髮)</option>
-                    <option value="fixing hair with both hands behind head" data-zh="雙手置於腦後整理頭髮，露出頸部">整理頭髮 (露頸)</option>
-                    <option value="holding a coffee cup, looking thoughtfully" data-zh="手持咖啡杯，呈現沈思神情">手持咖啡 (沈思)</option>
-                    <option value="spinning around, skirt fluttering in the air" data-zh="旋轉瞬間，裙擺在空中飛揚">旋轉瞬間 (裙擺)</option>
-                    <option value="hands in pockets, leaning back slightly" data-zh="雙手插入口袋，身體微後仰">隨性站姿 (插口袋)</option>
-                    <option value="crouching on floor, hugging knees" data-zh="蹲在地上抱著膝蓋，顯得楚楚可憐">蜷縮抱膝 (無辜)</option>
-                    <option value="bowing head slightly, eyes looking up at camera" data-zh="輕微低頭，由下往上凝視鏡頭">低頭仰視 (眼神)</option>
-                    <option value="one hand on hip, confident model pose" data-zh="一手叉腰，展現自信名模架勢">單手叉腰 (自信)</option>
-                    <option value="running gracefully, hair blowing in wind" data-zh="優雅奔跑，髮絲隨風狂舞">奔跑瞬間 (動態)</option>
-                    <option value="sitting on floor, Indian style, cozy vibe" data-zh="坐在地板上，盤腿而坐，氛圍溫馨">地板盤腿 (居家)</option>
-                    <option value="reaching out hand towards lens, foreground blur" data-zh="伸出手掌觸摸鏡頭，前景模糊感">伸手觸摸 (互動)</option>
-                    <option value="dancing mid-air, high dynamic motion" data-zh="躍入半空起舞，高動態感的動作">空中起舞 (震撼)</option>
-                    <option value="adjusting glasses, looking smart" data-zh="調整眼鏡，展現聰慧的神情">調整眼鏡 (知性)</option>
-                    <option value="peeking from behind a curtain, shy" data-zh="從窗簾後偷看，神情害羞靦腆">簾後偷看 (羞澀)</option>
-                </select>
-                <span class="section-label">表情細節</span>
-                <select id="expression">
-                    <option value="gentle smile, soft eye contact" data-zh="柔和微笑，溫柔對視鏡頭">柔和微笑</option>
-                    <option value="looking away thoughtfully, mysterious gaze" data-zh="若有所思地望向遠方，神秘感">憂鬱遠眺</option>
-                    <option value="playful wink, mischievous smile" data-zh="俏皮眨眼，帶著壞壞的笑容">俏皮眨眼</option>
-                    <option value="head tilted back, eyes half closed, soft breath" data-zh="頭微後仰，雙眼微閉，輕聲呼吸">慵懶放鬆</option>
-                    <option value="serious cold gaze, intimidating beauty" data-zh="嚴肅且冰冷的眼神，充滿侵略性">高冷驚艷</option>
-                    <option value="laughing out loud, eyes crinkling, natural joy" data-zh="放聲大笑，眼睛微瞇，自然的喜悅">開懷大笑</option>
-                    <option value="pouting slightly, cute and angry look" data-zh="微微嘟嘴，帶著可愛的生氣感">可愛嘟嘴</option>
-                    <option value="surprised expression, wide eyes, parted lips" data-zh="驚訝表情，睜大雙眼，紅唇微張">驚訝瞬間</option>
-                    <option value="seductive bedroom eyes, inviting look" data-zh="勾魂的眼神，充滿誘惑的氣息">嫵媚誘惑</option>
-                    <option value="cold and distant, indifferent expression" data-zh="冷淡且疏離，一種漠不關心的神情">漠然疏離</option>
-                </select>
+            <!-- 模組 2：場景建構 -->
+            <div class="glass p-6 md:p-8 space-y-6">
+                <h2 class="category-title text-white"><span class="text-blue-400 mr-3">🎬</span> THE ENVIRONMENT</h2>
+                
+                <div>
+                    <span class="section-label">動作姿態</span>
+                    <select id="pose">
+                        <option value="sitting on a chair, legs elegantly crossed" data-zh="優雅地坐在椅子上，雙腿交叉">優雅坐姿 (翹腳)</option>
+                        <option value="kneeling on the ground, torso leaning forward" data-zh="嫵媚地跪在地上，上半身微前傾">嫵媚跪姿 (前傾)</option>
+                        <option value="leaning against a wall, looking back over shoulder" data-zh="背靠牆壁，微微回眸，眼神慵懶">牆邊回眸 (側身)</option>
+                        <option value="stretching arms upward, revealing waistline" data-zh="雙手向上伸展，展現纖細腰部">伸懶腰 (展腰線)</option>
+                        <option value="walking towards camera, motion blur, hair flowing" data-zh="迎面走向鏡頭，帶點動態模糊感">自信走動 (動態)</option>
+                        <option value="squatting on heels, casual street style" data-zh="帥氣地蹲著，展現隨性街頭張力">街頭帥氣蹲姿</option>
+                        <option value="lying on back, hair spreading out like a fan" data-zh="平躺姿態，髮絲如扇子般散開">床上平躺 (散髮)</option>
+                        <option value="fixing hair with both hands behind head" data-zh="雙手置於腦後整理頭髮，露出頸部">整理頭髮 (露頸)</option>
+                        <option value="holding a coffee cup, looking thoughtfully" data-zh="手持咖啡杯，呈現沈思神情">手持咖啡 (沈思)</option>
+                        <option value="spinning around, skirt fluttering in the air" data-zh="旋轉瞬間，裙擺在空中飛揚">旋轉瞬間 (裙擺)</option>
+                        <option value="hands in pockets, leaning back slightly" data-zh="雙手插入口袋，身體微後仰">隨性站姿 (插口袋)</option>
+                        <option value="crouching on floor, hugging knees" data-zh="蹲在地上抱著膝蓋，顯得楚楚可憐">蜷縮抱膝 (無辜)</option>
+                        <option value="bowing head slightly, eyes looking up at camera" data-zh="輕微低頭，由下往上凝視鏡頭">低頭仰視 (眼神)</option>
+                        <option value="one hand on hip, confident model pose" data-zh="一手叉腰，展現自信名模架勢">單手叉腰 (自信)</option>
+                        <option value="running gracefully, hair blowing in wind" data-zh="優雅奔跑，髮絲隨風狂舞">奔跑瞬間 (動態)</option>
+                        <option value="sitting on floor, Indian style, cozy vibe" data-zh="坐在地板上，盤腿而坐，氛圍溫馨">地板盤腿 (居家)</option>
+                        <option value="reaching out hand towards lens, foreground blur" data-zh="伸出手掌觸摸鏡頭，前景模糊感">伸手觸摸 (互動)</option>
+                        <option value="dancing mid-air, high dynamic motion" data-zh="躍入半空起舞，高動態感的動作">空中起舞 (震撼)</option>
+                        <option value="adjusting glasses, looking smart" data-zh="調整眼鏡，展現聰慧的神情">調整眼鏡 (知性)</option>
+                        <option value="peeking from behind a curtain, shy" data-zh="從窗簾後偷看，神情害羞靦腆">簾後偷看 (羞澀)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <span class="section-label">服裝設定</span>
+                    <select id="outfit">
+                        <option value="white knit backless sweater, bold cutouts" data-zh="白色針織露背毛衣，展現大膽曲線">處男殺手毛衣</option>
+                        <option value="tight yoga wear, high-stretch fabric" data-zh="緊身瑜珈服，強調肌肉線條感">專業瑜珈服</option>
+                        <option value="high-slit silk cheongsam (Qipao), gold embroidery" data-zh="高開衩絲綢旗袍，華麗金絲刺繡">精緻高開衩旗袍</option>
+                        <option value="oversized white shirt, no pants, semi-transparent" data-zh="超大號白襯衫，下身失蹤，隨性居家">男友風白襯衫</option>
+                        <option value="classic Japanese sailor uniform, pleated skirt" data-zh="經典日本水手服，搭配百褶裙">校園水手服</option>
+                        <option value="elegant satin nightgown, lace trim" data-zh="優雅綢緞睡裙，鑲有蕾絲邊">奢華絲緞睡袍</option>
+                        <option value="cool black leather jacket, punk style" data-zh="帥氣黑皮衣，龐克金屬風格">帥氣龐克皮衣</option>
+                        <option value="stylish lace lingerie set, intricate textures" data-zh="時尚蕾絲內衣，擁有精細織紋">高端蕾絲內衣</option>
+                        <option value="micro bikini, string style, showing skin" data-zh="極小比基尼，綁帶式，展現肌膚">性感綁帶比基尼</option>
+                        <option value="professional office blazer, pencil skirt" data-zh="專業職場西裝，搭配鉛筆裙">職場知性套裝</option>
+                        <option value="oversized hoodie, street fashion, urban" data-zh="超大號連帽衫，街頭時尚潮流">潮流連帽衫</option>
+                        <option value="denim short shorts, crop top, summer vibe" data-zh="牛仔短褲，短版上衣，夏季氛圍">夏日牛仔短裝</option>
+                        <option value="flowy floral sundress, light chiffon" data-zh="飄逸碎花洋裝，輕盈雪紡材質">清新碎花長裙</option>
+                        <option value="traditional Japanese Kimono, colorful patterns" data-zh="傳統日式和服，華麗花卉圖案">華麗傳統和服</option>
+                        <option value="elegant evening gown, backless, diamonds" data-zh="優雅晚禮服，露背設計，點綴鑽石">高貴露背禮服</option>
+                        <option value="sporty track suit, athletic aesthetic" data-zh="動感運動套裝，展現健康美感">活力運動套裝</option>
+                        <option value="maid cafe uniform, ruffles and apron" data-zh="女僕咖啡廳制服，荷葉邊與圍裙">甜美萌系女僕</option>
+                        <option value="gothic lolita dress, dark lace, ribbons" data-zh="哥德蘿莉塔裙，黑蕾絲與緞帶">哥德蘿莉裙裝</option>
+                        <option value="transparent wet shirt, clinging to skin" data-zh="微濕透明襯衫，緊貼肌膚質感">濕身誘惑襯衫</option>
+                        <option value="ballet leotard, tutu, elegant silk" data-zh="芭蕾舞衣，蓬蓬裙，優雅絲綢">芭蕾舞伶裝束</option>
+                    </select>
+                </div>
+
+                <div>
+                    <span class="section-label">場景大百科</span>
+                    <select id="scene">
+                        <option value="luxury marble bathroom, bathtub, steam haze" data-zh="奢華大理石浴室，浴缸水氣繚繞">豪華浴室水氣</option>
+                        <option value="Taipei Ximending at night, neon signs" data-zh="台北西門町夜景，霓虹閃爍">台北西門町</option>
+                        <option value="sunny balcony, laundry drying, dappled light" data-zh="陽光露台，晾曬衣物的生活感">陽光陽台</option>
+                        <option value="nostalgic classroom, desks, sunset light" data-zh="懷舊教室，課桌椅，夕陽斜射">黃昏夕陽教室</option>
+                        <option value="school corridor, cherry blossoms outside" data-zh="校園走廊，窗外櫻花漫天">櫻花漫天走廊</option>
+                        <option value="school rooftop, city view, blue sky" data-zh="學校天台，俯瞰城市景觀">高校屋頂天台</option>
+                        <option value="cyberpunk street, dense signage, grit" data-zh="賽博風格街頭，招牌密佈">賽博九龍城寨</option>
+                        <option value="misty forest, god rays, mossy floor" data-zh="晨霧森林，耶穌光透過樹影">神秘晨霧森林</option>
+                        <option value="tropical beach, sunset, palm trees" data-zh="熱帶海灘，金黃夕陽餘暉">夕陽金黃海灘</option>
+                        <option value="subway station platform, empty, neon" data-zh="空曠的捷運月台，冷色調霓虹">捷運月台對比</option>
+                        <option value="late night convenience store, lights" data-zh="深夜便利商店，孤寂城市感">深夜超商門口</option>
+                        <option value="classic European mansion, velvet, library" data-zh="古典歐式豪宅，絲絨與書架">奢華古典大宅</option>
+                        <option value="abandoned church, god rays, stone walls" data-zh="廢棄教堂，聖光照亮石牆">廢棄教堂聖光</option>
+                        <option value="infinite swimming pool, ocean view" data-zh="無邊際泳池，與海連成一線">無邊際泳池</option>
+                        <option value="minimalist photo studio, grey back" data-zh="極簡攝影棚，乾淨強烈陰影">高端純色棚拍</option>
+                        <option value="traditional tea house, wooden floor" data-zh="傳統茶館，木地板與禪意">日式禪意茶室</option>
+                        <option value="messy bedroom, white sheets, morning" data-zh="剛睡醒的臥室，白色床單">慵懶白色床鋪</option>
+                        <option value="lavender field, endless purple" data-zh="紫色薰衣草田，唯美花海">唯美紫色花海</option>
+                        <option value="deep mountain waterfall, rocks" data-zh="深山瀑布，清澈水流與岩石">瀑布幽谷奇景</option>
+                        <option value="industrial warehouse, steam, raw" data-zh="工業風倉庫，蒸汽與水泥地">工業風廢墟感</option>
+                        <option value="modern gym, bright highlights" data-zh="現代健身房，鏡面與強烈光">活力現代健身房</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- 3. 服裝與場景 -->
-            <div class="glass p-5 space-y-4">
-                <h3 class="text-red-400 font-bold flex items-center"><span class="mr-2">👗</span> 服裝場景</h3>
-                <select id="outfit">
-                    <option value="white knit backless sweater, bold cutouts" data-zh="白色針織露背毛衣，展現大膽曲線">處男殺手毛衣</option>
-                    <option value="tight yoga wear, high-stretch fabric" data-zh="緊身瑜珈服，強調肌肉線條感">專業瑜珈服</option>
-                    <option value="high-slit silk cheongsam (Qipao), gold embroidery" data-zh="高開衩絲綢旗袍，華麗金絲刺繡">精緻高開衩旗袍</option>
-                    <option value="oversized white shirt, no pants, semi-transparent" data-zh="超大號白襯衫，下身失蹤，隨性居家">男友風白襯衫</option>
-                    <option value="classic Japanese sailor uniform, pleated skirt" data-zh="經典日本水手服，搭配百褶裙">校園水手服</option>
-                    <option value="elegant satin nightgown, lace trim" data-zh="優雅綢緞睡裙，鑲有蕾絲邊">奢華絲緞睡袍</option>
-                    <option value="cool black leather jacket, punk style" data-zh="帥氣黑皮衣，龐克金屬風格">帥氣龐克皮衣</option>
-                    <option value="stylish lace lingerie set, intricate textures" data-zh="時尚蕾絲內衣，擁有精細織紋">高端蕾絲內衣</option>
-                    <option value="micro bikini, string style, showing skin" data-zh="極小比基尼，綁帶式，展現肌膚">性感綁帶比基尼</option>
-                    <option value="professional office blazer, pencil skirt" data-zh="專業職場西裝，搭配鉛筆裙">職場知性套裝</option>
-                    <option value="oversized hoodie, street fashion, urban" data-zh="超大號連帽衫，街頭時尚潮流">潮流連帽衫</option>
-                    <option value="denim short shorts, crop top, summer vibe" data-zh="牛仔短褲，短版上衣，夏季氛圍">夏日牛仔短裝</option>
-                    <option value="flowy floral sundress, light chiffon" data-zh="飄逸碎花洋裝，輕盈雪紡材質">清新碎花長裙</option>
-                    <option value="traditional Japanese Kimono, colorful patterns" data-zh="傳統日式和服，華麗花卉圖案">華麗傳統和服</option>
-                    <option value="elegant evening gown, backless, diamonds" data-zh="優雅晚禮服，露背設計，點綴鑽石">高貴露背禮服</option>
-                    <option value="sporty track suit, athletic aesthetic" data-zh="動感運動套裝，展現健康美感">活力運動套裝</option>
-                    <option value="maid cafe uniform, ruffles and apron" data-zh="女僕咖啡廳制服，荷葉邊與圍裙">甜美萌系女僕</option>
-                    <option value="gothic lolita dress, dark lace, ribbons" data-zh="哥德蘿莉塔裙，黑蕾絲與緞帶">哥德蘿莉裙裝</option>
-                    <option value="transparent wet shirt, clinging to skin" data-zh="微濕透明襯衫，緊貼肌膚質感">濕身誘惑襯衫</option>
-                    <option value="ballet leotard, tutu, elegant silk" data-zh="芭蕾舞衣，蓬蓬裙，優雅絲綢">芭蕾舞伶裝束</option>
-                </select>
-                <span class="section-label">場景大百科</span>
-                <select id="scene">
-                    <option value="luxury marble bathroom, bathtub, steam haze" data-zh="奢華大理石浴室，浴缸水氣繚繞">豪華浴室水氣</option>
-                    <option value="Taipei Ximending at night, neon signs" data-zh="台北西門町夜景，霓虹閃爍">台北西門町</option>
-                    <option value="sunny balcony, laundry drying, dappled light" data-zh="陽光露台，晾曬衣物的生活感">陽光陽台</option>
-                    <option value="nostalgic classroom, desks, sunset light" data-zh="懷舊教室，課桌椅，夕陽斜射">黃昏夕陽教室</option>
-                    <option value="school corridor, cherry blossoms outside" data-zh="校園走廊，窗外櫻花漫天">櫻花漫天走廊</option>
-                    <option value="school rooftop, city view, blue sky" data-zh="學校天台，俯瞰城市景觀">高校屋頂天台</option>
-                    <option value="cyberpunk street, dense signage, grit" data-zh="賽博風格街頭，招牌密佈">賽博九龍城寨</option>
-                    <option value="misty forest, god rays, mossy floor" data-zh="晨霧森林，耶穌光透過樹影">神秘晨霧森林</option>
-                    <option value="tropical beach, sunset, palm trees" data-zh="熱帶海灘，金黃夕陽餘暉">夕陽金黃海灘</option>
-                    <option value="subway station platform, empty, neon" data-zh="空曠的捷運月台，冷色調霓虹">捷運月台對比</option>
-                    <option value="late night convenience store, lights" data-zh="深夜便利商店，孤寂城市感">深夜超商門口</option>
-                    <option value="classic European mansion, velvet, library" data-zh="古典歐式豪宅，絲絨與書架">奢華古典大宅</option>
-                    <option value="abandoned church, god rays, stone walls" data-zh="廢棄教堂，聖光照亮石牆">廢棄教堂聖光</option>
-                    <option value="infinite swimming pool, ocean view" data-zh="無邊際泳池，與海連成一線">無邊際泳池</option>
-                    <option value="minimalist photo studio, grey back" data-zh="極簡攝影棚，乾淨強烈陰影">高端純色棚拍</option>
-                    <option value="traditional tea house, wooden floor" data-zh="傳統茶館，木地板與禪意">日式禪意茶室</option>
-                    <option value="messy bedroom, white sheets, morning" data-zh="剛睡醒的臥室，白色床單">慵懶白色床鋪</option>
-                    <option value="lavender field, endless purple" data-zh="紫色薰衣草田，唯美花海">唯美紫色花海</option>
-                    <option value="deep mountain waterfall, rocks" data-zh="深山瀑布，清澈水流與岩石">瀑布幽谷奇景</option>
-                    <option value="industrial warehouse, steam, raw" data-zh="工業風倉庫，蒸汽與水泥地">工業風廢墟感</option>
-                    <option value="modern gym, bright highlights" data-zh="現代健身房，鏡面與強烈光">活力現代健身房</option>
-                </select>
-            </div>
+            <!-- 模組 3：鏡頭渲染 -->
+            <div class="glass p-6 md:p-8 space-y-6">
+                <h2 class="category-title text-white"><span class="text-emerald-400 mr-3">📸</span> THE LENS</h2>
+                
+                <div>
+                    <span class="section-label">光影技術</span>
+                    <select id="lighting">
+                        <option value="Tyndall effect (God rays), cinematic" data-zh="丁達爾效應(耶穌光)，電影級體積光">耶穌光效果</option>
+                        <option value="Rembrandt lighting, dramatic side light" data-zh="倫勃朗式照明，戲劇化側光">倫勃朗側光</option>
+                        <option value="Golden hour backlight, sun flare" data-zh="日落金黃逆光，溫暖鏡頭光暈">日落逆光</option>
+                        <option value="Direct camera flash, fashion magazine" data-zh="相機直射閃光燈，硬核雜誌感">閃光燈直拍</option>
+                        <option value="Moonlight, cold blue tones, deep shadows" data-zh="銀色月光，冷藍調性，深邃陰影">寂靜冷月光</option>
+                        <option value="Soft neon lighting, teal and orange" data-zh="柔和霓虹光，青橙電影調色">城市霓虹光</option>
+                        <option value="Strobe lighting, high fashion, sharp" data-zh="攝影棚閃光燈，高端時尚質感">棚拍專業閃光</option>
+                        <option value="Rainbow prism light, color spectrum" data-zh="彩虹稜鏡折射，光譜幻彩色澤">彩虹折射光</option>
+                        <option value="Cinematic low key, mysterious shadows" data-zh="電影感暗調，充滿神秘的陰影">電影級暗調</option>
+                        <option value="Dappled sunlight through leaves, bokeh" data-zh="樹葉縫隙灑落的斑駁陽光，散景">樹蔭斑駁光</option>
+                        <option value="Cyberpunk pink and blue neon backlight" data-zh="賽博龐克粉藍霓虹逆光">賽博霓虹逆光</option>
+                        <option value="Candlelight glow, warm and intimate" data-zh="溫馨燭光，柔和且親密的暖光">溫馨柔燭光</option>
+                        <option value="Stage spotlight, dramatic contrast" data-zh="舞台聚光燈，戲劇化對比效果">舞台聚光燈</option>
+                        <option value="Overhead hard light, edgy fashion" data-zh="頂部硬光，尖銳前衛的時尚感">頂部時尚硬光</option>
+                        <option value="Sunset silhouettes, orange sky" data-zh="夕陽剪影，橘紅色天空背景">夕陽大剪影</option>
+                        <option value="Underwater shimmering light, wavy" data-zh="水下粼粼波光，波動的折射">水下折射光</option>
+                        <option value="Morning fog diffusion, soft white" data-zh="晨霧擴散光，呈現柔和的白色">晨霧柔霧感</option>
+                        <option value="Volumetric steam light, dewy atmosphere" data-zh="體積蒸氣光，濕潤的水汽氛圍">蒸氣體積光</option>
+                        <option value="Glitch light effect, futuristic" data-zh="數位故障光效，具有未來科幻感">數位故障光</option>
+                        <option value="Golden sparkles, magical bokeh" data-zh="金色光斑，夢幻般的散景效果">夢幻金粉光</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <span class="section-label">相機規格</span>
+                    <select id="camera">
+                        <option value="Sony A1, 85mm f/1.2 GM, sharp eyes" data-zh="Sony A1 旗艦機，85mm GM 鏡頭">Sony A1 (85mm)</option>
+                        <option value="Leica M11, 35mm Summilux, grainy" data-zh="Leica M11，35mm 帶底片顆粒">Leica M11 (35mm)</option>
+                        <option value="Canon R5, 50mm f/1.2, creamy bokeh" data-zh="Canon R5，50mm 奶油散景">Canon R5 (50mm)</option>
+                        <option value="Hasselblad X2D, medium format detail" data-zh="哈蘇中片幅，極致像素細節">Hasselblad (中片幅)</option>
+                        <option value="Close-up macro lens, extreme detail" data-zh="微距特寫，捕捉極致微小細節">微距特寫規格</option>
+                        <option value="Anamorphic lens, cinematic wide aspect" data-zh="變形寬銀幕鏡頭，電影寬屏感">電影變形鏡頭</option>
+                        <option value="Fisheye lens, distorted perspective" data-zh="魚眼長焦，誇張的透視扭曲">魚眼特效鏡頭</option>
+                        <option value="Disposable camera, 90s retro look" data-zh="拋棄式相機，90年代復古感">復古即可拍</option>
+                        <option value="Polaroid film style, vintage colors" data-zh="拍立得風格，帶有復古色調">拍立得質感</option>
+                        <option value="GoPro wide view, action cam style" data-zh="GoPro 廣角，運動相機視角">運動相機視角</option>
+                    </select>
+                </div>
 
-            <!-- 4. 攝影技術 -->
-            <div class="glass p-5 space-y-4">
-                <h3 class="text-yellow-400 font-bold flex items-center"><span class="mr-2">📷</span> 攝影技術</h3>
-                <select id="lighting">
-                    <option value="Tyndall effect (God rays), cinematic" data-zh="丁達爾效應(耶穌光)，電影級體積光">耶穌光效果</option>
-                    <option value="Rembrandt lighting, dramatic side light" data-zh="倫勃朗式照明，戲劇化側光">倫勃朗側光</option>
-                    <option value="Golden hour backlight, sun flare" data-zh="日落金黃逆光，溫暖鏡頭光暈">日落逆光</option>
-                    <option value="Direct camera flash, fashion magazine" data-zh="相機直射閃光燈，硬核雜誌感">閃光燈直拍</option>
-                    <option value="Moonlight, cold blue tones, deep shadows" data-zh="銀色月光，冷藍調性，深邃陰影">寂靜冷月光</option>
-                    <option value="Soft neon lighting, teal and orange" data-zh="柔和霓虹光，青橙電影調色">城市霓虹光</option>
-                    <option value="Strobe lighting, high fashion, sharp" data-zh="攝影棚閃光燈，高端時尚質感">棚拍專業閃光</option>
-                    <option value="Rainbow prism light, color spectrum" data-zh="彩虹稜鏡折射，光譜幻彩色澤">彩虹折射光</option>
-                    <option value="Cinematic low key, mysterious shadows" data-zh="電影感暗調，充滿神秘的陰影">電影級暗調</option>
-                    <option value="Dappled sunlight through leaves, bokeh" data-zh="樹葉縫隙灑落的斑駁陽光，散景">樹蔭斑駁光</option>
-                    <option value="Cyberpunk pink and blue neon backlight" data-zh="賽博龐克粉藍霓虹逆光">賽博霓虹逆光</option>
-                    <option value="Candlelight glow, warm and intimate" data-zh="溫馨燭光，柔和且親密的暖光">溫馨柔燭光</option>
-                    <option value="Stage spotlight, dramatic contrast" data-zh="舞台聚光燈，戲劇化對比效果">舞台聚光燈</option>
-                    <option value="Overhead hard light, edgy fashion" data-zh="頂部硬光，尖銳前衛的時尚感">頂部時尚硬光</option>
-                    <option value="Sunset silhouettes, orange sky" data-zh="夕陽剪影，橘紅色天空背景">夕陽大剪影</option>
-                    <option value="Underwater shimmering light, wavy" data-zh="水下粼粼波光，波動的折射">水下折射光</option>
-                    <option value="Morning fog diffusion, soft white" data-zh="晨霧擴散光，呈現柔和的白色">晨霧柔霧感</option>
-                    <option value="Volumetric steam light, dewy atmosphere" data-zh="體積蒸氣光，濕潤的水汽氛圍">蒸氣體積光</option>
-                    <option value="Glitch light effect, futuristic" data-zh="數位故障光效，具有未來科幻感">數位故障光</option>
-                    <option value="Golden sparkles, magical bokeh" data-zh="金色光斑，夢幻般的散景效果">夢幻金粉光</option>
-                </select>
-                <span class="section-label">相機規格</span>
-                <select id="camera">
-                    <option value="Sony A1, 85mm f/1.2 GM, sharp eyes" data-zh="Sony A1 旗艦機，85mm GM 鏡頭">Sony A1 (85mm)</option>
-                    <option value="Leica M11, 35mm Summilux, grainy" data-zh="Leica M11，35mm 帶底片顆粒">Leica M11 (35mm)</option>
-                    <option value="Canon R5, 50mm f/1.2, creamy bokeh" data-zh="Canon R5，50mm 奶油散景">Canon R5 (50mm)</option>
-                    <option value="Hasselblad X2D, medium format detail" data-zh="哈蘇中片幅，極致像素細節">Hasselblad (中片幅)</option>
-                    <option value="Close-up macro lens, extreme detail" data-zh="微距特寫，捕捉極致微小細節">微距特寫規格</option>
-                    <option value="Anamorphic lens, cinematic wide aspect" data-zh="變形寬銀幕鏡頭，電影寬屏感">電影變形鏡頭</option>
-                    <option value="Fisheye lens, distorted perspective" data-zh="魚眼長焦，誇張的透視扭曲">魚眼特效鏡頭</option>
-                    <option value="Disposable camera, 90s retro look" data-zh="拋棄式相機，90年代復古感">復古即可拍</option>
-                    <option value="Polaroid film style, vintage colors" data-zh="拍立得風格，帶有復古色調">拍立得質感</option>
-                    <option value="GoPro wide view, action cam style" data-zh="GoPro 廣角，運動相機視角">運動相機視角</option>
-                </select>
-                <div class="pt-2">
-                    <button onclick="generate()" class="btn-master w-full py-4 rounded-xl font-black text-white tracking-widest shadow-2xl uppercase">Generate Masterpiece</button>
+                <div class="pt-4 mt-auto">
+                    <button onclick="generate()" class="btn-master w-full py-4 rounded-xl font-black text-white tracking-widest shadow-2xl uppercase">
+                        <i class="fas fa-magic mr-2"></i> Generate Masterpiece
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- 輸出面板 -->
-        <div class="space-y-6">
+        <div class="glass p-8 max-w-4xl mx-auto space-y-8 mb-12">
             <div>
                 <p class="section-label text-orange-400">🔥 EN PROMPT (GEMINI / GROK / FLUX)</p>
                 <div class="output-panel">
-                    <span class="copy-btn" onclick="copy('out-en')">COPY EN</span>
-                    <div id="out-en" class="text-slate-300 leading-relaxed text-sm">請配置選單並點擊「GENERATE」...</div>
+                    <button class="copy-btn" onclick="copy('out-en')">COPY EN</button>
+                    <div id="out-en" class="text-slate-200 leading-relaxed text-[15px]">請配置上方的選單，並點擊「Generate Masterpiece」生成你的專屬提示詞...</div>
                 </div>
             </div>
             <div>
-                <p class="section-label text-emerald-400">🇹🇼 繁體中文描述</p>
+                <p class="section-label text-emerald-400">🇹🇼 ZH TRANSLATION (繁體中文描述)</p>
                 <div class="output-panel border-emerald-900/30">
-                    <span class="copy-btn" onclick="copy('out-zh')">COPY ZH</span>
-                    <div id="out-zh" class="text-emerald-300/80 leading-relaxed text-sm">請配置選單並點擊「GENERATE」...</div>
+                    <button class="copy-btn" onclick="copy('out-zh')">COPY ZH</button>
+                    <div id="out-zh" class="text-emerald-200/80 leading-relaxed text-[15px]">設定完成後，這裡將顯示對應的中文描述，方便你確認畫面細節。</div>
                 </div>
             </div>
         </div>
@@ -229,7 +421,20 @@
     <script>
         function copy(id) {
             const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text).then(() => { alert('已複製到剪貼簿！'); });
+            navigator.clipboard.writeText(text).then(() => { 
+                const btn = document.querySelector(`button[onclick="copy('${id}')"]`);
+                const originalText = btn.innerText;
+                btn.innerText = 'COPIED! ✓';
+                btn.style.background = '#10b981';
+                btn.style.borderColor = '#10b981';
+                btn.style.color = '#fff';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }, 2000);
+            });
         }
 
         function generate() {
@@ -246,8 +451,21 @@
             
             const zh = `【大師級百科寫真】描繪${face.selectedOptions[0].getAttribute('data-zh')}。動作為${pose.selectedOptions[0].getAttribute('data-zh')}。身形呈現${body.selectedOptions[0].getAttribute('data-zh')}，神情為${exp.selectedOptions[0].getAttribute('data-zh')}。她穿著${outfit.selectedOptions[0].getAttribute('data-zh')}。場景設定在${scene.selectedOptions[0].getAttribute('data-zh')}。光影效果：${lighting.selectedOptions[0].getAttribute('data-zh')}。拍攝規格：${camera.selectedOptions[0].getAttribute('data-zh')}。`;
 
-            document.getElementById('out-en').innerText = en;
-            document.getElementById('out-zh').innerText = zh;
+            // Add fade-in animation
+            const outEn = document.getElementById('out-en');
+            const outZh = document.getElementById('out-zh');
+            
+            outEn.style.opacity = '0';
+            outZh.style.opacity = '0';
+            
+            setTimeout(() => {
+                outEn.innerText = en;
+                outZh.innerText = zh;
+                outEn.style.transition = 'opacity 0.5s ease';
+                outZh.style.transition = 'opacity 0.5s ease';
+                outEn.style.opacity = '1';
+                outZh.style.opacity = '1';
+            }, 100);
         }
     </script>
 </body>
