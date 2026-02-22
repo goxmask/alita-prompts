@@ -5,33 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>上傳作品 | Alita AI 寫真館</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #050505; color: #fff; font-family: 'PingFang TC', sans-serif; }
-        .input-card { background: #111; border: 1px solid #222; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        input, textarea, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; width: 100%; outline: none; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: #f97316; box-shadow: 0 0 10px rgba(249, 115, 22, 0.2); }
-        .btn-submit { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 18px; cursor: pointer; transition: 0.3s; }
-        .btn-submit:disabled { background: #333; cursor: not-allowed; opacity: 0.5; }
-        .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.4); }
-        .hint { color: #f97316; font-size: 12px; margin-top: 10px; text-align: center; }
+        body { background: #050505; color: #fff; font-family: 'PingFang TC', -apple-system, sans-serif; position: relative; }
+        
+        /* 承襲主頁的環境光暈 */
+        .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+        .glow-orb-1 { position: absolute; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, rgba(5, 5, 5, 0) 70%); border-radius: 50%; filter: blur(80px); animation: float 20s ease-in-out infinite alternate; }
+        .glow-orb-2 { position: absolute; bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(234, 88, 12, 0.08) 0%, rgba(5, 5, 5, 0) 70%); border-radius: 50%; filter: blur(100px); animation: float 25s ease-in-out infinite alternate-reverse; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(5%, 5%) scale(1.1); } }
+
+        /* 玻璃擬態卡片 */
+        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        
+        /* 表單元素優化 */
+        input, textarea, select { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); color: #f8fafc; padding: 14px 16px; border-radius: 12px; width: 100%; font-size: 14px; outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        input:focus, textarea:focus, select:focus { border-color: #f97316; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 0 2px rgba(249, 115, 22, 0.15); background: rgba(15, 23, 42, 0.8); }
+        
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; cursor: pointer; }
+        select option { background-color: #0f172a; }
+
+        /* 按鈕設計 */
+        .btn-submit { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); width: 100%; padding: 16px; border-radius: 14px; font-weight: 900; font-size: 16px; letter-spacing: 0.1em; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(255, 255, 255, 0.1); text-transform: uppercase; }
+        .btn-submit:disabled { background: #334155; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; border-color: transparent; color: #94a3b8; }
+        .btn-submit:hover:not(:disabled) { transform: translateY(-2px) scale(1.01); box-shadow: 0 15px 30px -5px rgba(249, 115, 22, 0.4); border-color: rgba(255, 255, 255, 0.3); }
+        
+        /* 標籤設計 */
+        .section-label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.15em; display: flex; align-items: center; }
+        .hint { color: #f97316; font-size: 12px; margin-top: 16px; text-align: center; font-weight: bold; letter-spacing: 0.05em; }
+
+        /* 自訂上傳檔案按鈕 */
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-upload-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
+        .custom-file-upload { background: rgba(249, 115, 22, 0.1); border: 1px dashed rgba(249, 115, 22, 0.3); color: #fbd38d; padding: 14px 16px; border-radius: 12px; text-align: center; transition: 0.3s; font-size: 14px; font-weight: 600; display: flex; justify-content: center; align-items: center; }
+        .file-upload-wrapper:hover .custom-file-upload { background: rgba(249, 115, 22, 0.2); border-color: #f97316; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="max-w-xl w-full">
-        <div class="mb-8 text-center">
-            <h1 class="text-3xl font-black italic text-white">SUBMIT YOUR <span class="text-orange-500">MASTERPIECE</span></h1>
-            <p class="text-gray-500 text-sm mt-2">作品將由 Alita 自動優化後發布至雲端藝廊</p>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
+    <div class="ambient-bg">
+        <div class="glow-orb-1"></div>
+        <div class="glow-orb-2"></div>
+    </div>
+
+    <div class="max-w-xl w-full relative z-10">
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl md:text-5xl font-black italic text-white mb-3 tracking-tighter" style="text-shadow: 0 0 30px rgba(249,115,22,0.4);">
+                PUBLISH <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">MASTERPIECE</span>
+            </h1>
+            <p class="text-slate-400 font-bold text-sm tracking-widest">上傳作品至 Alita 雲端大百科藝廊</p>
         </div>
 
-        <div class="input-card space-y-6">
+        <div class="glass-card space-y-6">
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">作品標題</label>
+                <label class="section-label"><i class="fas fa-heading mr-2 text-orange-400"></i> 作品標題</label>
                 <input type="text" id="title" placeholder="例如：午後巷弄的微光">
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">使用的 AI 模型</label>
+                    <label class="section-label"><i class="fas fa-robot mr-2 text-indigo-400"></i> 使用的 AI 模型</label>
                     <select id="model">
                         <option value="Gemini">Google Gemini</option>
                         <option value="Grok">xAI Grok / Flux</option>
@@ -40,31 +72,57 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">上傳圖片</label>
-                    <input type="file" id="image" accept="image/*" class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-orange-500/10 file:text-orange-500 hover:file:bg-orange-500/20">
+                    <label class="section-label"><i class="fas fa-image mr-2 text-emerald-400"></i> 上傳圖片檔</label>
+                    <div class="file-upload-wrapper">
+                        <div class="custom-file-upload" id="fileNameDisplay">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i> 選擇高畫質圖片
+                        </div>
+                        <input type="file" id="image" accept="image/*" onchange="updateFileName(this)">
+                    </div>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">繁體中文提示詞</label>
-                <textarea id="zh" rows="3" placeholder="描述這張圖的意境..."></textarea>
+                <label class="section-label"><i class="fas fa-language mr-2 text-blue-400"></i> 繁體中文提示詞</label>
+                <textarea id="zh" rows="3" placeholder="描述這張圖的意境與細節..."></textarea>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">EN PROMPT</label>
+                <label class="section-label"><i class="fas fa-code mr-2 text-red-400"></i> EN PROMPT</label>
                 <textarea id="en" rows="3" placeholder="Paste the English prompt here..."></textarea>
             </div>
 
-            <button id="submitBtn" onclick="submitToAlita()" class="btn-submit">立即發布作品</button>
-            <p id="statusMsg" class="hint">Alita 正在為您的藝術之路保駕護航</p>
+            <div class="pt-4">
+                <button id="submitBtn" onclick="submitToAlita()" class="btn-submit">
+                    <i class="fas fa-paper-plane mr-2"></i> 發布至藝廊
+                </button>
+                <p id="statusMsg" class="hint opacity-0 transition-opacity duration-300">Alita 正在為您的藝術之路保駕護航</p>
+            </div>
         </div>
 
         <div class="mt-8 text-center">
-            <a href="gallery.html" class="text-gray-500 hover:text-white text-sm transition font-bold">← 返回藝廊</a>
+            <a href="gallery.html" class="text-slate-500 hover:text-orange-400 text-sm font-bold tracking-wider transition duration-300">
+                <i class="fas fa-arrow-left mr-1"></i> 返回藝廊
+            </a>
         </div>
     </div>
 
     <script>
+        function updateFileName(input) {
+            const display = document.getElementById('fileNameDisplay');
+            if (input.files && input.files.length > 0) {
+                display.innerHTML = `<i class="fas fa-check-circle mr-2 text-emerald-400"></i> ${input.files[0].name}`;
+                display.style.borderColor = '#10b981';
+                display.style.color = '#10b981';
+                display.style.background = 'rgba(16, 185, 129, 0.1)';
+            } else {
+                display.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> 選擇高畫質圖片`;
+                display.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                display.style.color = '#fbd38d';
+                display.style.background = 'rgba(249, 115, 22, 0.1)';
+            }
+        }
+
         async function submitToAlita() {
             const btn = document.getElementById('submitBtn');
             const msg = document.getElementById('statusMsg');
@@ -81,11 +139,11 @@
             formData.append('en', document.getElementById('en').value);
 
             btn.disabled = true;
-            btn.innerText = "正在進行雲端同步...";
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 同步至雲端中...';
             msg.innerText = "Alita 正在壓縮圖片並推送到 GitHub 永久基地，請稍候...";
+            msg.style.opacity = '1';
 
             try {
-                // 使用永久固定的 Cloudflare 隧道網址
                 const response = await fetch('https://alita-api.goxmask.dpdns.org/upload', {
                     method: 'POST',
                     body: formData
@@ -98,8 +156,16 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    alert('🎉 恭喜！作品已成功存入永久資料庫並發布。');
-                    window.location.href = 'gallery.html';
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i> 發布成功';
+                    btn.style.background = '#10b981';
+                    btn.style.borderColor = '#10b981';
+                    btn.style.color = '#fff';
+                    msg.innerText = "🎉 恭喜！作品已成功存入永久資料庫並發布。";
+                    msg.style.color = '#10b981';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'gallery.html';
+                    }, 1500);
                 } else {
                     throw new Error(result.error);
                 }
@@ -107,8 +173,9 @@
                 console.error('發布失敗:', error);
                 alert('連線失敗：' + error.message + '\n請確認您的 EC2 後台與隧道是否正常開啟。');
                 btn.disabled = false;
-                btn.innerText = "立即發布作品";
-                msg.innerText = "傳輸失敗，請再試一次。";
+                btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> 重新發布';
+                msg.innerText = "傳輸失敗，請檢查網路狀態後再試一次。";
+                msg.style.color = '#ef4444';
             }
         }
     </script>

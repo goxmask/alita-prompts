@@ -5,28 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理後台 | Alita AI 寫真館</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: 'PingFang TC', sans-serif; }
-        .admin-card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .login-overlay { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; items-center; justify-content: center; flex-direction: column; }
+        body { background: #050505; color: #fff; font-family: 'PingFang TC', -apple-system, sans-serif; position: relative; min-height: 100vh; }
+        
+        /* 環境光暈 */
+        .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+        .glow-orb-1 { position: absolute; top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, rgba(5, 5, 5, 0) 70%); border-radius: 50%; filter: blur(80px); animation: float 20s ease-in-out infinite alternate; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-5%, 5%) scale(1.1); } }
+
+        /* 登入畫面 */
+        .login-overlay { position: fixed; inset: 0; background: rgba(5,5,5,0.95); backdrop-filter: blur(20px); z-index: 100; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s ease; }
+        .login-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .login-input { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 16px; border-radius: 12px; width: 100%; max-width: 300px; text-align: center; outline: none; transition: 0.3s; margin-bottom: 24px; letter-spacing: 0.2em; font-family: monospace; }
+        .login-input:focus { border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
+        .btn-login { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; width: 100%; max-width: 300px; padding: 16px; border-radius: 12px; font-weight: 900; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+
+        /* 後台卡片列表 */
+        .admin-header { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); position: sticky; top: 0; z-index: 50; padding: 20px 0; }
+        .admin-card { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; transition: 0.3s; }
+        .admin-card:hover { background: rgba(30, 41, 59, 0.6); border-color: rgba(239, 68, 68, 0.3); transform: translateX(5px); }
+        .admin-img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); px: 16px; py: 8px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; }
+        .btn-delete:hover { background: #ef4444; color: #fff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
     </style>
 </head>
-<body class="p-4 md:p-10">
-    <!-- 簡單的登入檢查 -->
+<body>
+    <div class="ambient-bg"><div class="glow-orb-1"></div></div>
+
+    <!-- 登入畫面 -->
     <div id="login-box" class="login-overlay">
-        <h1 class="text-2xl font-bold mb-6 text-orange-500 italic">ALITA ADMIN LOGIN</h1>
-        <input type="password" id="pw" placeholder="輸入管理密碼..." class="bg-gray-900 border border-gray-700 p-3 rounded-lg w-64 text-center mb-4">
-        <button onclick="checkLogin()" class="bg-orange-500 px-10 py-3 rounded-lg font-bold">進入後台</button>
+        <div class="login-card">
+            <h1 class="text-3xl font-black mb-2 text-white italic tracking-tighter" style="text-shadow: 0 0 20px rgba(239,68,68,0.5);">
+                ALITA <span class="text-red-500">CORE</span>
+            </h1>
+            <p class="text-xs text-gray-500 mb-8 font-bold tracking-widest uppercase">System Administration</p>
+            <input type="password" id="pw" placeholder="••••••••" class="login-input" onkeypress="if(event.key === 'Enter') checkLogin()">
+            <button onclick="checkLogin()" class="btn-login"><i class="fas fa-unlock-alt mr-2"></i> AUTHORIZE</button>
+        </div>
     </div>
 
-    <div id="admin-content" class="hidden max-w-4xl mx-auto">
-        <header class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-black text-white">藝廊管理控制台</h1>
-            <button onclick="location.reload()" class="text-xs text-gray-500 underline">登出</button>
+    <!-- 後台內容 -->
+    <div id="admin-content" class="hidden">
+        <header class="admin-header">
+            <div class="max-w-5xl mx-auto px-6 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-black text-white italic tracking-tight"><i class="fas fa-shield-alt text-red-500 mr-2"></i> ALITA ADMIN</h1>
+                    <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-widest font-mono">Database Management</p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="gallery.html" class="text-xs text-gray-400 hover:text-white transition py-2"><i class="fas fa-external-link-alt mr-1"></i> 前往藝廊</a>
+                    <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition"><i class="fas fa-sign-out-alt mr-1"></i> 登出</button>
+                </div>
+            </div>
         </header>
 
-        <div id="item-list" class="space-y-4">
-            <!-- 由 JS 動態加載作品 -->
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="flex justify-between items-end mb-6">
+                <h2 class="text-lg font-bold text-gray-300">已發布作品清單</h2>
+                <span class="text-xs font-mono text-gray-500 bg-gray-900 px-3 py-1 rounded-full border border-gray-800" id="total-count">Total: 0</span>
+            </div>
+            <div id="item-list" class="space-y-2">
+                <!-- 由 JS 動態加載作品 -->
+            </div>
         </div>
     </div>
 
@@ -34,11 +76,20 @@
         function checkLogin() {
             const pw = document.getElementById('pw').value;
             if (pw === 'orange2026') {
-                document.getElementById('login-box').classList.add('hidden');
-                document.getElementById('admin-content').classList.remove('hidden');
-                loadItems();
+                const loginBox = document.getElementById('login-box');
+                loginBox.style.opacity = '0';
+                setTimeout(() => {
+                    loginBox.classList.add('hidden');
+                    document.getElementById('admin-content').classList.remove('hidden');
+                    loadItems();
+                }, 500);
             } else {
-                alert('密碼錯誤！');
+                const input = document.getElementById('pw');
+                input.style.borderColor = '#ef4444';
+                input.style.transform = 'translateX(-5px)';
+                setTimeout(() => input.style.transform = 'translateX(5px)', 100);
+                setTimeout(() => input.style.transform = 'translateX(0)', 200);
+                input.value = '';
             }
         }
 
@@ -47,18 +98,26 @@
                 .then(res => res.json())
                 .then(data => {
                     const list = document.getElementById('item-list');
+                    document.getElementById('total-count').innerText = `Total: ${data.length}`;
                     list.innerHTML = '';
-                    data.forEach(item => {
+                    
+                    // 反轉陣列，讓最新上傳的顯示在最上面
+                    [...data].reverse().forEach(item => {
                         list.innerHTML += `
-                            <div class="admin-card">
-                                <div class="flex items-center space-x-4">
-                                    <img src="${item.img}" class="w-16 h-16 object-cover rounded-lg border border-gray-800">
+                            <div class="admin-card group">
+                                <div class="flex items-center space-x-5">
+                                    <div class="relative">
+                                        <img src="${item.img}" class="admin-img">
+                                        <div class="absolute top-1 left-1 bg-black/80 text-[9px] px-1.5 py-0.5 rounded text-gray-400 font-mono">${item.model}</div>
+                                    </div>
                                     <div>
-                                        <h3 class="font-bold text-gray-200">${item.title}</h3>
-                                        <p class="text-xs text-gray-500">ID: ${item.id}</p>
+                                        <h3 class="font-bold text-gray-200 text-sm md:text-base mb-1">${item.title}</h3>
+                                        <p class="text-[10px] text-gray-500 font-mono bg-black/50 inline-block px-2 py-1 rounded border border-gray-800">ID: ${item.id}</p>
                                     </div>
                                 </div>
-                                <button onclick="generateDeleteCmd('${item.id}', '${item.title}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition">刪除作品</button>
+                                <button onclick="generateDeleteCmd('${item.id}', '${item.title}')" class="btn-delete px-4 py-2">
+                                    <i class="fas fa-trash-alt mr-2 group-hover:animate-pulse"></i> 刪除
+                                </button>
                             </div>
                         `;
                     });
@@ -67,7 +126,11 @@
 
         function generateDeleteCmd(id, title) {
             const cmd = `刪除藝廊作品｜ID：${id}｜標題：${title}`;
-            prompt('請複製下方指令並傳送給 Alita (Telegram) 以完成刪除作業：', cmd);
+            navigator.clipboard.writeText(cmd).then(() => {
+                alert(`已複製刪除指令：\n\n${cmd}\n\n請直接貼給 Telegram 上的 Alita 執行。`);
+            }).catch(() => {
+                prompt('請複製下方指令並傳送給 Alita (Telegram) 以完成刪除作業：', cmd);
+            });
         }
     </script>
 </body>
