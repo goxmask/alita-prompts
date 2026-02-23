@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background: #0a0a0a; color: #fff; font-family: 'PingFang TC', sans-serif; overflow-x: hidden; }
-        .masonry-grid { display: columns; column-width: 320px; column-gap: 20px; width: 100%; }
-        .art-card { break-inside: avoid; margin-bottom: 20px; background: #161616; border: 1px solid #222; border-radius: 16px; overflow: hidden; transition: 0.3s; position: relative; cursor: zoom-in; }
+        .masonry-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; } 
+        .art-card { width: 320px; flex-grow: 1; max-width: 400px; break-inside: avoid; margin-bottom: 0px; background: #161616; border: 1px solid #222; border-radius: 16px; overflow: hidden; transition: 0.3s; position: relative; cursor: zoom-in; display: flex; flex-direction: column; }
+        .art-card > img { flex-grow: 1; object-fit: cover; }
         .art-card:hover { transform: translateY(-5px); border-color: #f97316; box-shadow: 0 10px 30px rgba(249, 115, 22, 0.2); }
         
         /* 修正 Overlay 與滾動軸問題 */
