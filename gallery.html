@@ -107,7 +107,7 @@
             .then(res => res.json())
             .then(data => {
                 // Reverse data to show newest first if data.json is appended at bottom
-                data.reverse().forEach(item => {
+                data.forEach(item => {
                     const zhClean = item.zh.replace(/'/g, "\\'");
                     const enClean = item.en.replace(/'/g, "\\'");
                     
