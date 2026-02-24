@@ -107,9 +107,10 @@
             .then(res => res.json())
             .then(data => {
                 // Reverse data to show newest first if data.json is appended at bottom
-                data.forEach(item => {
-                    const zhClean = item.zh.replace(/'/g, "\\'");
-                    const enClean = item.en.replace(/'/g, "\\'");
+                data.reverse().forEach(item => {
+                    // 使用 JSON.stringify 並處理單引號來安全地傳遞字串到 onclick
+                    const zhEscaped = JSON.stringify(item.zh).slice(1, -1).replace(/'/g, "\\'");
+                    const enEscaped = JSON.stringify(item.en).slice(1, -1).replace(/'/g, "\\'");
                     
                     // We separate the image click from the overlay scroll/copy area
                     root.innerHTML += `
@@ -126,14 +127,14 @@
                                     <div class="prompt-text-box">
                                         <div class="sticky-header flex justify-between items-center text-[11px] font-bold text-gray-300">
                                             <span>🇹🇼 繁中提示詞</span>
-                                            <span class="btn-copy" onclick="copyText('${zhClean}', this)">COPY</span>
+                                            <span class="btn-copy" onclick="copyText('${zhEscaped}', this)">COPY</span>
                                         </div>
                                         <p class="text-xs leading-relaxed text-gray-300">${item.zh}</p>
                                     </div>
                                     <div class="prompt-text-box">
                                         <div class="sticky-header flex justify-between items-center text-[11px] font-bold text-gray-300">
                                             <span>🔥 EN PROMPT</span>
-                                            <span class="btn-copy" onclick="copyText('${enClean}', this)">COPY</span>
+                                            <span class="btn-copy" onclick="copyText('${enEscaped}', this)">COPY</span>
                                         </div>
                                         <p class="text-[11px] leading-relaxed text-gray-400 font-mono">${item.en}</p>
                                     </div>
