@@ -106,8 +106,8 @@
         fetch('data.json')
             .then(res => res.json())
             .then(data => {
-                // Reverse data to show newest first if data.json is appended at bottom
-                data.reverse().forEach(item => {
+                // Restore original sorting as requested by user
+                data.forEach(item => {
                     // 使用 JSON.stringify 並處理單引號來安全地傳遞字串到 onclick
                     const zhEscaped = JSON.stringify(item.zh).slice(1, -1).replace(/'/g, "\\'");
                     const enEscaped = JSON.stringify(item.en).slice(1, -1).replace(/'/g, "\\'");
