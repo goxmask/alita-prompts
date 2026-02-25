@@ -29,6 +29,14 @@
         .admin-img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); px: 16px; py: 8px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; }
         .btn-delete:hover { background: #ef4444; color: #fff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
+    
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #334155; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #ef4444; }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
@@ -61,6 +69,51 @@
             </div>
         </header>
 
+        
+        <div class="max-w-5xl mx-auto px-6 mb-10">
+            <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="flex h-3 w-3 rounded-full bg-red-500 animate-pulse" id="gk-indicator"></span>
+                        <h2 class="text-xl font-black text-white italic tracking-tight">GATEKEEPER <span class="text-xs font-mono text-gray-500 bg-gray-800 px-2 py-0.5 rounded ml-2">V9.1</span></h2>
+                    </div>
+                    <p class="text-xs text-gray-400">開啟後，首頁將需要輸入時效性通行碼才能進入。</p>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-6">
+                    <div class="flex items-center gap-3 bg-black/30 p-3 rounded-xl border border-white/5">
+                        <span class="text-xs font-bold text-gray-300">門禁模式</span>
+                        <label class="switch">
+                            <input type="checkbox" id="gatekeeper-toggle" onchange="toggleGatekeeper(this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center gap-2 bg-black/30 p-2 rounded-xl border border-white/5">
+                        <select id="expiry-hours" class="bg-transparent text-xs font-bold text-white outline-none px-2 cursor-pointer">
+                            <option value="1" class="bg-slate-900">1 小時</option>
+                            <option value="3" class="bg-slate-900">3 小時</option>
+                            <option value="6" class="bg-slate-900">6 小時</option>
+                            <option value="24" class="bg-slate-900">24 小時</option>
+                        </select>
+                        <button onclick="generatePasscode()" class="bg-red-500 hover:bg-red-600 text-white text-[10px] font-black px-4 py-2 rounded-lg transition uppercase tracking-widest">
+                            產生通行碼
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="code-display" class="hidden mt-4 bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-1">目前有效通行碼</p>
+                    <div class="flex items-baseline gap-3">
+                        <span id="current-code" class="text-2xl font-mono font-black text-white tracking-widest">------</span>
+                        <span id="expiry-time" class="text-[10px] text-gray-500"></span>
+                    </div>
+                </div>
+                <button onclick="copyCode()" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-lg transition font-bold">複製代碼</button>
+            </div>
+        </div>
         <div class="max-w-5xl mx-auto px-6 py-8">
             <div class="flex justify-between items-end mb-6">
                 <h2 class="text-lg font-bold text-gray-300">已發布作品清單</h2>
@@ -81,7 +134,7 @@
                 setTimeout(() => {
                     loginBox.classList.add('hidden');
                     document.getElementById('admin-content').classList.remove('hidden');
-                    loadItems();
+                    loadItems(); initGatekeeper();
                 }, 500);
             } else {
                 const input = document.getElementById('pw');
@@ -90,6 +143,77 @@
                 setTimeout(() => input.style.transform = 'translateX(5px)', 100);
                 setTimeout(() => input.style.transform = 'translateX(0)', 200);
                 input.value = '';
+            }
+        }
+
+        
+        const API_BASE = "https://alita-api.goxmask.dpdns.org";
+
+        async function initGatekeeper() {
+            try {
+                const res = await fetch(`${API_BASE}/api/gatekeeper/status`);
+                const status = await res.json();
+                document.getElementById('gatekeeper-toggle').checked = status.enabled;
+                updateGKIndicator(status.enabled);
+                
+                if (status.enabled && status.expiry > 0) {
+                    // 我們需要從後台獲取代碼（如果有需要顯示的話）
+                    // 為了簡便，我們先在 generate 時獲取
+                }
+            } catch (e) { console.error("Gatekeeper Init Error:", e); }
+        }
+
+        async function toggleGatekeeper(enabled) {
+            try {
+                const res = await fetch(`${API_BASE}/api/gatekeeper/toggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled })
+                });
+                const data = await res.json();
+                updateGKIndicator(data.enabled);
+            } catch (e) { alert("切換失敗"); }
+        }
+
+        async function generatePasscode() {
+            const hours = parseInt(document.getElementById('expiry-hours').value);
+            try {
+                const res = await fetch(`${API_BASE}/api/gatekeeper/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hours })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const display = document.getElementById('code-display');
+                    display.classList.remove('hidden');
+                    document.getElementById('current-code').innerText = data.code;
+                    
+                    const expiry = new Date(data.expiry * 1000);
+                    document.getElementById('expiry-time').innerText = `有效期至: ${expiry.toLocaleString()}`;
+                    
+                    // 如果原本沒開啟，自動幫忙打開開關
+                    if (!document.getElementById('gatekeeper-toggle').checked) {
+                        document.getElementById('gatekeeper-toggle').checked = true;
+                        toggleGatekeeper(true);
+                    }
+                }
+            } catch (e) { alert("生成失敗"); }
+        }
+
+        function copyCode() {
+            const code = document.getElementById('current-code').innerText;
+            navigator.clipboard.writeText(code).then(() => alert('通行碼已複製！'));
+        }
+
+        function updateGKIndicator(enabled) {
+            const ind = document.getElementById('gk-indicator');
+            if (enabled) {
+                ind.classList.remove('bg-gray-600');
+                ind.classList.add('bg-red-500', 'animate-pulse');
+            } else {
+                ind.classList.remove('bg-red-500', 'animate-pulse');
+                ind.classList.add('bg-gray-600');
             }
         }
 
