@@ -394,7 +394,69 @@ DB.camera = [
     {en: "Microscopic electron microscope view", zh: "電子顯微鏡視角，細胞級別的超微觀"}
 ];
 
-// 如果是在瀏覽器環境中引入，掛載到 window，方便 HTML 調用
+
+// --- Phase 3: V9.0 Director's Cut (Cinematic Storyboard) ---
+DB.composition_single = [
+    {en: "none", zh: "無特定構圖 (預設)"},
+    {en: "curled up in the corner of the room, vulnerable", zh: "蜷縮在角落，呈現脆弱感"},
+    {en: "leaning against the door frame, melancholic sigh", zh: "靠在門框上，帶著憂鬱的嘆息"},
+    {en: "looking out of the window into the distance, back to camera", zh: "背對鏡頭，靠窗遠眺"},
+    {en: "submerged in the bathtub, water covering half of the face", zh: "沉沒在浴缸中，水面淹沒半張臉"},
+    {en: "walking alone down an empty street, isolated", zh: "獨自走在空蕩的街道上，孤獨感"},
+    {en: "staring intensely into the mirror, reflection visible", zh: "凝視著鏡子裡的自己，雙重影像"},
+    {en: "extreme wide shot, subject looks small against the vast landscape", zh: "極致遠景，人在壯闊環境中顯得渺小"},
+    {en: "extreme close-up, half of the face hidden in shadows", zh: "極致特寫，半張臉隱藏在陰影中"}
+];
+
+DB.composition_multi = [
+    {en: "none", zh: "無特定互動 (各自獨立)"},
+    {en: "intimate distance, leaning head on shoulder", zh: "極近親密距離，頭枕在對方肩上"},
+    {en: "wall slam (kabedon), intense eye contact, romantic tension", zh: "壁咚，強烈眼神交會，浪漫張力"},
+    {en: "standing back-to-back, vigilant and ready for action", zh: "背對背站立，警戒狀態"},
+    {en: "whispering secrets into each other's ears", zh: "在耳邊輕聲細語說著秘密"},
+    {en: "one person holding the other's wrist, tense confrontation", zh: "一人抓著另一人的手腕，緊張對峙"},
+    {en: "chasing each other, dynamic motion blur", zh: "互相追逐，動態模糊"},
+    {en: "sleeping embraced in bed, peaceful morning", zh: "在床上相擁而眠，寧靜的早晨"},
+    {en: "sitting together on the floor, looking at the same phone", zh: "一起坐在地板上，看著同一支手機"},
+    {en: "sharing an umbrella in the heavy rain", zh: "在大雨中共同撐著一把傘"}
+];
+
+DB.props_general = [
+    {en: "none", zh: "空手 (無道具)"},
+    {en: "holding a half-empty glass of red wine", zh: "手持半滿的紅酒杯"},
+    {en: "holding a transparent umbrella", zh: "撐著一把透明雨傘"},
+    {en: "holding a vintage film camera", zh: "拿著復古底片相機"},
+    {en: "a lollipop in mouth, playful", zh: "嘴裡含著棒棒糖，俏皮"},
+    {en: "black silk ribbon tied around the neck", zh: "頸部繫著黑色絲綢緞帶"},
+    {en: "holding a glowing smartphone, illuminating face", zh: "拿著發光的手機，光線照亮臉龐"},
+    {en: "loosening a necktie, exhausted", zh: "正在解開領帶，疲憊感"},
+    {en: "holding an open book, reading attentively", zh: "手捧翻開的書本，專注閱讀"},
+    {en: "smoking a cigarette, smoke curling up", zh: "抽著菸，煙霧繚繞"}
+];
+
+DB.objects_env = [
+    {en: "none", zh: "純淨背景 (無額外物件)"},
+    {en: "scattered clothes on the floor, messy but lived-in", zh: "散落在地上的衣物，凌亂但生活感"},
+    {en: "a lit scented candle on the nightstand, flickering flame", zh: "點燃的香氛蠟燭，閃爍火光"},
+    {en: "neon puddles reflecting city lights on the wet street", zh: "濕潤街道上反射燈光的霓虹水窪"},
+    {en: "floating dust motes visible in the sunlight rays", zh: "陽光射線中可見的漂浮塵埃"},
+    {en: "a steaming cup of coffee on the table", zh: "桌上一杯冒著熱氣的咖啡"},
+    {en: "broken neon signs, urban decay", zh: "破損的霓虹招牌，都市衰敗感"},
+    {en: "fallen autumn leaves scattered across the scene", zh: "秋天落葉散落滿地"},
+    {en: "magical floating glowing orbs in the air", zh: "空氣中漂浮著魔法發光光球"}
+];
+
+DB.pets = [
+    {en: "none", zh: "無寵物"},
+    {en: "a peaceful fluffy cat sleeping curled up on the bed", zh: "一隻毛茸茸的貓在床上蜷縮熟睡"},
+    {en: "a black cat staring from the shadows, mysterious", zh: "一隻黑貓在陰影中注視，神秘感"},
+    {en: "a loyal large dog resting nearby, guarding", zh: "一隻忠誠的大型犬在旁邊休息守護"},
+    {en: "a playful golden retriever with head near the camera", zh: "俏皮的黃金獵犬大頭湊近鏡頭"},
+    {en: "a white dove flying past the subject", zh: "一隻白鴿從主角身旁飛過"}
+];
+
+// 如果是在瀏覽器環境中引入
+，掛載到 window，方便 HTML 調用
 if (typeof window !== 'undefined') {
     window.DB = DB;
 }
@@ -448,47 +510,73 @@ if (typeof window !== 'undefined') {
                     dice.style.transform = `rotate(${Math.random() * 360 + 360}deg)`;
                 }
 
-                const theme = Math.floor(Math.random() * 5);
+                // 0: 一般, 1: 賽博龐克, 2: 奇幻, 3: 復古, 4: 暗黑哥德, 5: 女優/私密, 6: 溫馨同居
+                const theme = Math.floor(Math.random() * 7);
                 const sceneSelect = document.getElementById("global_scene");
                 const lightSelect = document.getElementById("global_light");
                 const camSelect = document.getElementById("global_cam");
+                
+                const objSelect = document.getElementById("global_obj");
+                const petsSelect = document.getElementById("global_pets");
+                const compMSelect = document.getElementById("global_comp_m");
+                const compSSelect = document.getElementById("global_comp_s");
                 
                 if (sceneSelect && lightSelect && camSelect) {
                     let sceneIdx = Math.floor(Math.random() * sceneSelect.options.length);
                     let lightIdx = Math.floor(Math.random() * lightSelect.options.length);
                     let camIdx = Math.floor(Math.random() * camSelect.options.length);
+                    let objIdx = Math.floor(Math.random() * objSelect.options.length);
+                    let petsIdx = Math.floor(Math.random() * petsSelect.options.length);
+                    let compMIdx = Math.floor(Math.random() * compMSelect.options.length);
+                    let compSIdx = Math.floor(Math.random() * compSSelect.options.length);
                     
                     if (theme === 1) { // 賽博龐克
                         sceneIdx = [16, 17].includes(sceneIdx) ? sceneIdx : 17;
-                        lightIdx = 10;
+                        lightIdx = 10; objIdx = 3; // neon puddles
                     } else if (theme === 2) { // 奇幻
                         sceneIdx = Math.floor(Math.random() * 10) + 30; // 偏移至奇幻場景
-                        lightIdx = 19;
+                        lightIdx = 19; objIdx = 8; // glowing orbs
                     } else if (theme === 3) { // 復古
                         sceneIdx = 10;
                         camIdx = [1, 7, 8][Math.floor(Math.random()*3)];
                     } else if (theme === 4) { // 暗黑哥德
-                        sceneIdx = 13;
-                        lightIdx = 7;
+                        sceneIdx = 13; lightIdx = 7; petsIdx = 2; // black cat
+                    } else if (theme === 5) { // 女優/色慾/私密故事
+                        sceneIdx = [23, 24].includes(sceneIdx) ? sceneIdx : 24; // messy bedroom / bathroom
+                        lightIdx = 11; // candlelight
+                        compMIdx = [1, 2][Math.floor(Math.random()*2)]; // intimate or kabedon
+                        compSIdx = 4; // bathtub
+                    } else if (theme === 6) { // 溫馨同居正能量
+                        sceneIdx = 24; // messy bedroom
+                        lightIdx = 3; // dappled sunlight
+                        petsIdx = [1, 3][Math.floor(Math.random()*2)]; // sleeping cat or loyal dog
+                        compMIdx = 7; // sleeping embraced
+                        objIdx = 5; // coffee
                     }
                     
                     sceneSelect.selectedIndex = Math.min(sceneIdx, sceneSelect.options.length - 1);
                     lightSelect.selectedIndex = Math.min(lightIdx, lightSelect.options.length - 1);
                     camSelect.selectedIndex = Math.min(camIdx, camSelect.options.length - 1);
+                    if(objSelect) objSelect.selectedIndex = Math.min(objIdx, objSelect.options.length - 1);
+                    if(petsSelect) petsSelect.selectedIndex = Math.min(petsIdx, petsSelect.options.length - 1);
+                    if(compMSelect) compMSelect.selectedIndex = Math.min(compMIdx, compMSelect.options.length - 1);
+                    if(compSSelect) compSSelect.selectedIndex = Math.min(compSIdx, compSSelect.options.length - 1);
                     
-                    [sceneSelect, lightSelect, camSelect].forEach(el => blink(el));
+                    [sceneSelect, lightSelect, camSelect, objSelect, petsSelect, compMSelect, compSSelect].forEach(el => blink(el));
                 }
 
                 // 人物屬性
                 ['f1', 'f2', 'm1', 'm2'].forEach(id => {
                     const chk = document.getElementById(`chk_${id}`);
                     if (chk && chk.checked) {
-                        ["age", "eth", "face", "body", "outfit", "pose", "exp"].forEach(k => {
+                        ["age", "eth", "face", "body", "outfit", "pose", "exp", "props"].forEach(k => {
                             const el = document.getElementById(`${id}_${k}`);
                             if (el) {
                                 let idx = Math.floor(Math.random() * el.options.length);
                                 if (theme === 1 && (k === "face" || k === "outfit") && el.options.length > 8) idx = 8;
                                 if (theme === 2 && id.startsWith("f") && k === "face" && el.options.length > 9) idx = 9;
+                                if (theme === 5 && id.startsWith("f") && k === "outfit") idx = 3; // white shirt no pants
+                                if (theme === 5 && id.startsWith("f") && k === "props") idx = 1; // red wine
                                 el.selectedIndex = idx;
                                 blink(el);
                             }
@@ -543,23 +631,43 @@ if (typeof window !== 'undefined') {
                     const titleZh = config[id].title.replace(/[^男女主角 12]/g, '');
                     const titleEn = `[Subject ${index + 1} - ${config[id].gender === 'f' ? 'Female' : 'Male'}]`;
                     
-                    const traits = ["age", "eth", "face", "body", "outfit", "pose", "exp"];
+                    const traits = ["age", "eth", "face", "body", "outfit", "pose", "exp", "props"];
                     const v = {};
                     traits.forEach(t => {
                         v[t + 'En'] = getVal(id, t, 'en');
                         v[t + 'Zh'] = getVal(id, t, 'zh');
                     });
 
-                    enChars.push(`${titleEn}: A ${v.ageEn} ${v.ethEn} ${v.faceEn}. Physique: ${v.bodyEn}. Expression: ${v.expEn}. Wearing: ${v.outfitEn}. Pose: ${v.poseEn}.`);
-                    zhChars.push(`【${titleZh}】一位${v.ageZh}的${v.ethZh}，${v.faceZh}。身形為${v.bodyZh}，神情${v.expZh}。穿著${v.outfitZh}，動作為${v.poseZh}。`);
+                    let propsStr = v.propsEn !== "none" ? `. Holding/Prop: ${v.propsEn}` : "";
+                    let propsZhStr = v.propsZh !== "空手 (無道具)" ? `。帶著道具：${v.propsZh}` : "";
+
+                    enChars.push(`${titleEn}: A ${v.ageEn} ${v.ethEn} ${v.faceEn}. Physique: ${v.bodyEn}. Expression: ${v.expEn}. Wearing: ${v.outfitEn}. Pose: ${v.poseEn}${propsStr}.`);
+                    zhChars.push(`【${titleZh}】一位${v.ageZh}的${v.ethZh}，${v.faceZh}。身形為${v.bodyZh}，神情${v.expZh}。穿著${v.outfitZh}，動作為${v.poseZh}${propsZhStr}。`);
                 });
 
                 const sceneEn = getVal('global', 'scene', 'en'); const sceneZh = getVal('global', 'scene', 'zh');
                 const lightEn = getVal('global', 'light', 'en'); const lightZh = getVal('global', 'light', 'zh');
                 const camEn = getVal('global', 'cam', 'en'); const camZh = getVal('global', 'cam', 'zh');
+                
+                // V9 New Elements
+                const objEn = getVal('global', 'obj', 'en'); const objZh = getVal('global', 'obj', 'zh');
+                const petsEn = getVal('global', 'pets', 'en'); const petsZh = getVal('global', 'pets', 'zh');
+                
+                let stagingEn = ""; let stagingZh = "";
+                if (activeIds.length === 1) {
+                    const compEn = getVal('global', 'comp_s', 'en'); const compZh = getVal('global', 'comp_s', 'zh');
+                    if(compEn !== "none") { stagingEn = `Composition & Spatial Relation: ${compEn}. `; stagingZh = `構圖位置：${compZh}。`; }
+                } else {
+                    const compEn = getVal('global', 'comp_m', 'en'); const compZh = getVal('global', 'comp_m', 'zh');
+                    if(compEn !== "none") { stagingEn = `Character Interaction: ${compEn}. `; stagingZh = `人物互動：${compZh}。`; }
+                }
 
-                const finalEn = `A hyper-realistic 8K cinematic masterpiece photography featuring ${activeIds.length} subject(s). \n\n${enChars.join('\n')}\n\nThe setting is ${sceneEn}. Lighting: ${lightEn}. Shot with ${camEn}. Technical: Subsurface scattering, contact shadows, sharp focus on subjects, cinematic color grading, raw photo style, masterpiece quality.`;
-                const finalZh = `【大師級多角色寫真】畫面中包含 ${activeIds.length} 位主角。\n\n${zhChars.join('\n')}\n\n場景設定在${sceneZh}。光影效果：${lightZh}。拍攝規格：${camZh}。`;
+                let detailsEn = ""; let detailsZh = "";
+                if(objEn !== "none") { detailsEn += `Environment details: ${objEn}. `; detailsZh += `環境物件：${objZh}。`; }
+                if(petsEn !== "none") { detailsEn += `Animal companion: ${petsEn}. `; detailsZh += `寵物配角：${petsZh}。`; }
+
+                const finalEn = `A hyper-realistic 8K cinematic masterpiece photography featuring ${activeIds.length} subject(s). \n\n${enChars.join('\n')}\n\nThe setting is ${sceneEn}. ${stagingEn}${detailsEn}Lighting: ${lightEn}. Shot with ${camEn}. Technical: Subsurface scattering, contact shadows, sharp focus on subjects, cinematic color grading, raw photo style, masterpiece quality.`;
+                const finalZh = `【大師級多角色寫真】畫面中包含 ${activeIds.length} 位主角。\n\n${zhChars.join('\n')}\n\n場景設定在${sceneZh}。${stagingZh}${detailsZh}光影效果：${lightZh}。拍攝規格：${camZh}。`;
 
                 const outEn = document.getElementById('out-en');
                 const outZh = document.getElementById('out-zh');
@@ -581,7 +689,7 @@ if (typeof window !== 'undefined') {
         // 初始化所有面板
         function initPanels() {
             try {
-                console.log("Initializing Alita Director V8.0...");
+                console.log("Initializing Alita Director V9.0...");
                 const container = document.getElementById('characters-container');
                 if (!container) return;
                 
@@ -598,7 +706,10 @@ if (typeof window !== 'undefined') {
                             </div>
                             <div><span class="section-label">容貌風格</span>${buildSelect(id, 'face', g+'_face')}</div>
                             <div><span class="section-label">身形比例</span>${buildSelect(id, 'body', g+'_body')}</div>
-                            <div><span class="section-label">服裝設定</span>${buildSelect(id, 'outfit', g+'_outfit')}</div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><span class="section-label">服裝設定</span>${buildSelect(id, 'outfit', g+'_outfit')}</div>
+                                <div><span class="section-label text-orange-400">隨身道具</span>${buildSelect(id, 'props', 'props_general')}</div>
+                            </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div><span class="section-label">動作姿態</span>${buildSelect(id, 'pose', 'pose')}</div>
                                 <div><span class="section-label">神情</span>${buildSelect(id, 'exp', 'exp')}</div>
@@ -610,6 +721,14 @@ if (typeof window !== 'undefined') {
 
                 document.getElementById('global-env').innerHTML = `
                     <span class="section-label">場景大百科</span>${buildSelect('global', 'scene', 'scene')}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        <div><span class="section-label text-indigo-400">環境物件</span>${buildSelect('global', 'obj', 'objects_env')}</div>
+                        <div><span class="section-label text-amber-400">寵物配角</span>${buildSelect('global', 'pets', 'pets')}</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        <div><span class="section-label text-pink-400">單人構圖 (1人)</span>${buildSelect('global', 'comp_s', 'composition_single')}</div>
+                        <div><span class="section-label text-rose-400">多人互動 (2人+)</span>${buildSelect('global', 'comp_m', 'composition_multi')}</div>
+                    </div>
                 `;
                 document.getElementById('global-lens').innerHTML = `
                     <span class="section-label">光影技術</span>${buildSelect('global', 'light', 'light')}
