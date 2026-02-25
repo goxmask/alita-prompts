@@ -742,7 +742,122 @@ if (typeof window !== 'undefined') {
             }
         }
 
-        window.onload = initPanels;
+        
+        // --- Gatekeeper V9.1 Logic ---
+        const API_BASE = "https://alita-api.goxmask.dpdns.org";
+
+        async function checkGatekeeper() {
+            const overlay = document.getElementById('gatekeeper-overlay');
+            try {
+                // 檢查本地是否有尚未過期的憑證
+                const localToken = localStorage.getItem('alita_access_token');
+                const localExpiry = localStorage.getItem('alita_access_expiry');
+                
+                if (localToken && localExpiry && Date.now() < parseInt(localExpiry)) {
+                    console.log("Valid local token found, skipping gatekeeper.");
+                    return;
+                }
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3秒超時放行
+
+                const res = await fetch(`${API_BASE}/api/gatekeeper/status`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                const status = await res.json();
+                
+                if (status.is_active) {
+                    overlay.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            } catch (e) {
+                console.warn("Gatekeeper backend unreachable, Fail-Open activated.", e);
+                // Fail-Open: 不顯示遮罩，直接讓用戶進去
+            }
+        }
+
+        async function verifyPasscode() {
+            const codeInput = document.getElementById('access-code-input');
+            const btn = document.getElementById('verify-btn');
+            const errorMsg = document.getElementById('gk-error-msg');
+            const code = codeInput.value.toUpperCase();
+
+            if (!code) return;
+
+            btn.disabled = true;
+            btn.innerText = "VERIFYING...";
+            errorMsg.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/gatekeeper/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const result = await res.json();
+
+                if (result.valid) {
+                    // 驗證成功，存入本地 (24小時效期，或配合後台傳回的過期時間)
+                    // 這裡我們先拿 status 獲取真正的 expiry 以求精準
+                    const statusRes = await fetch(`${API_BASE}/api/gatekeeper/status`);
+                    const statusData = await statusRes.json();
+                    
+                    localStorage.setItem('alita_access_token', code);
+                    localStorage.setItem('alita_access_expiry', (statusData.expiry * 1000).toString());
+                    
+                    // 華麗解鎖動畫
+                    const overlay = document.getElementById('gatekeeper-overlay');
+                    overlay.style.transition = 'opacity 0.8s ease';
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }, 800);
+                } else {
+                    errorMsg.style.display = 'block';
+                    codeInput.classList.add('border-red-500');
+                    setTimeout(() => codeInput.classList.remove('border-red-500'), 1000);
+                    btn.innerText = "Authorize Access";
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                alert("驗證出錯，請重試或聯繫開發者。");
+                btn.innerText = "Authorize Access";
+                btn.disabled = false;
+            }
+        }
+
+        // 修改 initPanels 或 window.onload 來啟動
+
+        window.onload = () => { initPanels(); checkGatekeeper(); };
     </script>
+
+    <!-- Gatekeeper Overlay -->
+    <div id="gatekeeper-overlay" class="fixed inset-0 z-[2000] bg-[#050505] flex items-center justify-center" style="display:none">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] animate-pulse"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] animate-pulse"></div>
+        </div>
+        
+        <div class="glass p-10 max-w-md w-full mx-4 text-center relative z-10 border-white/10" style="background: rgba(15, 23, 42, 0.8);">
+            <div class="mb-8">
+                <h2 class="text-4xl font-black italic tracking-tighter text-white mb-2">ALITA <span class="text-orange-500">STUDIO</span></h2>
+                <div class="h-1 w-12 bg-orange-500 mx-auto rounded-full mb-6"></div>
+                <p class="text-slate-300 text-sm font-bold leading-relaxed">
+                    「這是一個私人創意空間。<br>請輸入導演提供的通行碼以開啟門戶。」
+                </p>
+            </div>
+            
+            <input type="text" id="access-code-input" maxlength="6" placeholder="------" 
+                   style="text-transform: uppercase;"
+                   class="w-full bg-black/40 border border-white/10 text-white text-center py-4 rounded-xl text-2xl font-mono tracking-[0.5em] focus:border-orange-500 outline-none transition mb-6">
+            
+            <button onclick="verifyPasscode()" id="verify-btn" class="w-full btn-master py-4 rounded-xl font-black text-white tracking-widest uppercase shadow-xl">
+                Authorize Access
+            </button>
+            
+            <p id="gk-error-msg" class="text-red-500 text-xs mt-4 font-bold" style="display:none">通行碼無效或已過期，請聯繫導演。</p>
+        </div>
+    </div>
+
 </body>
 </html>
