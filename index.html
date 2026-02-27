@@ -801,8 +801,16 @@ if (typeof window !== 'undefined') {
                     const statusRes = await fetch(`${API_BASE}/api/gatekeeper/status`);
                     const statusData = await statusRes.json();
                     
+                    let expiry = Date.now() + 3600000; // default 1 hour fallback
+                    if (statusData.codes && statusData.codes.length > 0) {
+                        const matchedCode = statusData.codes.find(c => c.code === code);
+                        if (matchedCode) {
+                            expiry = matchedCode.expiry * 1000;
+                        }
+                    }
+                    
                     localStorage.setItem('alita_access_token', code);
-                    localStorage.setItem('alita_access_expiry', (statusData.expiry * 1000).toString());
+                    localStorage.setItem('alita_access_expiry', expiry.toString());
                     
                     // 華麗解鎖動畫
                     const overlay = document.getElementById('gatekeeper-overlay');
