@@ -38,6 +38,8 @@
         .char-panel { display: none; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f97316">
 </head>
 <body class="p-4 md:p-8 lg:p-10">
     <div class="ambient-bg"><div class="glow-orb-1"></div><div class="glow-orb-2"></div></div>
@@ -837,6 +839,15 @@ if (typeof window !== 'undefined') {
         // 修改 initPanels 或 window.onload 來啟動
 
         window.onload = () => { initPanels(); checkGatekeeper(); };
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Alita PWA ready!', reg))
+                    .catch(err => console.log('PWA failed', err));
+            });
+        }
+
     </script>
 
     <!-- Gatekeeper Overlay -->

@@ -1,0 +1,17 @@
+{
+  "name": "Alita Director",
+  "short_name": "Alita",
+  "description": "Multi-Agent Masterpiece Engine for AI Prompts",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "images/art_1772222792182.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
