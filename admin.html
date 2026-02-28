@@ -22,6 +22,12 @@
         .btn-login { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; width: 100%; max-width: 300px; padding: 16px; border-radius: 12px; font-weight: 900; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; }
         .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
 
+        
+        /* Dashboard Stats */
+        .stat-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; flex: 1; min-width: 120px; }
+        .stat-value { font-family: monospace; font-weight: 900; font-size: 16px; color: #fff; }
+        .stat-label { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+
         /* 後台卡片列表 */
         .admin-header { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); position: sticky; top: 0; z-index: 50; padding: 20px 0; }
         .admin-card { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; transition: 0.3s; }
@@ -70,6 +76,25 @@
         </header>
 
         
+        
+        <!-- SYSTEM DASHBOARD -->
+        <div class="max-w-5xl mx-auto px-6 mb-6">
+            <div class="flex flex-wrap gap-4" id="system-stats">
+                <div class="stat-card">
+                    <div class="stat-label">Disk Available</div>
+                    <div class="stat-value text-emerald-400" id="stat-disk">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">System Load</div>
+                    <div class="stat-value" id="stat-load">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Uptime</div>
+                    <div class="stat-value text-indigo-400 text-xs" id="stat-uptime">--</div>
+                </div>
+            </div>
+        </div>
+
         <div class="max-w-5xl mx-auto px-6 mb-10">
             <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
                 <div>
@@ -130,7 +155,7 @@
                 setTimeout(() => {
                     loginBox.classList.add('hidden');
                     document.getElementById('admin-content').classList.remove('hidden');
-                    loadItems(); initGatekeeper();
+                    loadItems(); initGatekeeper(); updateSystemStats(); setInterval(updateSystemStats, 30000);
                 }, 500);
             } else {
                 const input = document.getElementById('pw');
@@ -144,6 +169,19 @@
 
         
                 const API_BASE = "https://alita-api.goxmask.dpdns.org";
+
+        
+        async function updateSystemStats() {
+            try {
+                const res = await fetch(`${API_BASE}/api/system/status`);
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('stat-disk').innerText = `${data.disk.avail} (${data.disk.percent})`;
+                    document.getElementById('stat-load').innerText = data.load.toFixed(2);
+                    document.getElementById('stat-uptime').innerText = data.uptime.replace('up ', '');
+                }
+            } catch (e) { console.error("Stats Error:", e); }
+        }
 
         async function initGatekeeper() {
             try {
