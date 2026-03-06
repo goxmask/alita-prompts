@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+    <script>
+        const API_BASE = "https://api.goxmask.dpdns.org";
+        async function checkAccess() {
+            try {
+                const res = await fetch(`${API_BASE}/api/gatekeeper/status`);
+                const status = await res.json();
+                if (!status.is_active) return; // 門禁沒開就放行
+                
+                const localToken = localStorage.getItem("alita_access_token");
+                if (!localToken) {
+                    window.location.href = "index.html";
+                    return;
+                }
+                
+                const verifyRes = await fetch(`${API_BASE}/api/gatekeeper/verify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code: localToken })
+                });
+                const vData = await verifyRes.json();
+                if (!vData.valid) {
+                    localStorage.removeItem("alita_access_token");
+                    window.location.href = "index.html";
+                }
+            } catch (e) { console.error("Auth Error", e); }
+        }
+        checkAccess();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alita AI 寫真藝廊</title>
