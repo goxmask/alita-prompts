@@ -70,7 +70,7 @@
                 </div>
                 <div class="flex gap-4">
                     <a href="gallery.html" class="text-xs text-gray-400 hover:text-white transition py-2"><i class="fas fa-external-link-alt mr-1"></i> 前往藝廊</a>
-                    <button onclick="location.reload()" class="bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition"><i class="fas fa-sign-out-alt mr-1"></i> 登出</button>
+                    <button onclick="logout()" class="bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition"><i class="fas fa-sign-out-alt mr-1"></i> 登出</button>
                 </div>
             </div>
         </header>
@@ -147,16 +147,33 @@
     </div>
 
     <script>
+        // 自動登入檢查
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('alita_admin_auth') === 'orange2026') {
+                showAdminInterface();
+            }
+        });
+
+        function showAdminInterface() {
+            const loginBox = document.getElementById('login-box');
+            loginBox.style.opacity = '0';
+            setTimeout(() => {
+                loginBox.classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+                loadItems(); initGatekeeper(); updateSystemStats(); setInterval(updateSystemStats, 30000);
+            }, 500);
+        }
+
+        function logout() {
+            localStorage.removeItem('alita_admin_auth');
+            location.reload();
+        }
+
         function checkLogin() {
             const pw = document.getElementById('pw').value;
             if (pw === 'orange2026') {
-                const loginBox = document.getElementById('login-box');
-                loginBox.style.opacity = '0';
-                setTimeout(() => {
-                    loginBox.classList.add('hidden');
-                    document.getElementById('admin-content').classList.remove('hidden');
-                    loadItems(); initGatekeeper(); updateSystemStats(); setInterval(updateSystemStats, 30000);
-                }, 500);
+                localStorage.setItem('alita_admin_auth', 'orange2026'); // 儲存登入狀態
+                showAdminInterface();
             } else {
                 const input = document.getElementById('pw');
                 input.style.borderColor = '#ef4444';
