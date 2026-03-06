@@ -755,10 +755,6 @@ if (typeof window !== 'undefined') {
                 const localToken = localStorage.getItem('alita_access_token');
                 const localExpiry = localStorage.getItem('alita_access_expiry');
                 
-                if (localToken && localExpiry && Date.now() < parseInt(localExpiry)) {
-                    console.log("Valid local token found, skipping gatekeeper.");
-                    return;
-                }
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 3000); // 3秒超時放行
