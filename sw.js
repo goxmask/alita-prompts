@@ -3,9 +3,7 @@ const ASSETS = [
   'index.html',
   'gallery.html',
   'admin.html',
-  'data.json',
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
+  'data.json'
 ];
 
 self.addEventListener('install', event => {
