@@ -773,7 +773,7 @@ if (typeof window !== 'undefined') {
                 }
             } catch (e) {
                 console.warn("Gatekeeper backend unreachable, Fail-Open activated.", e);
-                // Fail-Open: 不顯示遮罩，直接讓用戶進去
+                overlay.style.display = "flex";
             }
         }
 
