@@ -299,8 +299,8 @@
                     document.getElementById('total-count').innerText = `Total: ${data.length}`;
                     list.innerHTML = '';
                     
-                    // 反轉陣列，讓最新上傳的顯示在最上面
-                    [...data].reverse().forEach(item => {
+                    // 直接讀取陣列，讓最新上傳的顯示在最上面
+                    data.forEach(item => {
                         list.innerHTML += `
                             <div class="admin-card group">
                                 <div class="flex items-center space-x-5">
